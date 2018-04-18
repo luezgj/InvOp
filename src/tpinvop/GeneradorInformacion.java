@@ -11,4 +11,6 @@ package InvOp;
  */
 public class GeneradorInformacion {
     
+    private void prueba(){}
+    
 }

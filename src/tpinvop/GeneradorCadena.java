@@ -1,4 +1,4 @@
-package InvOp;
+package tpinvop;
 
 
 public class GeneradorCadena {

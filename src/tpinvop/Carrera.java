@@ -1,4 +1,4 @@
-package InvOp;
+package tpinvop;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,13 +6,13 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 
 public class Carrera{
+    
     String nombre;
-    //List<Materia> Materias;
     List<Linea> Lineas;
     
     public Carrera(String nombre,String ruta){
@@ -35,7 +35,7 @@ public class Carrera{
         try {
 		archivo = new File (ruta);
                 is= new FileInputStream(archivo);
-                InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+                InputStreamReader isr = new InputStreamReader(is, "ISO-8859-1");
 		br = new BufferedReader(isr);
                 
                 String linea;
@@ -90,10 +90,10 @@ public class Carrera{
        }
     }
     
-    public boolean Pertenece(Materia m){
+    private boolean Pertenece(Materia m){
         if (Lineas.size() > 0)
         for (Linea l : Lineas) {
-            if (l.contiene(m)){
+            if (l.contieneMateria(m)){
                 return true;
             }
         }
@@ -109,56 +109,45 @@ public class Carrera{
         return null;
     }
     
-    
-    private List<Materia> getMatSig(List<Materia> lm){
+    //Dado un nodo devuelve las materias que tengan correlativas
+    //En caso de que dos materia tenga en comun una correlativa, solo se devuelve una sola
+    //Si no tiene correlativa no se inserta
+    private List<Materia> getMatSig(Nodo n){
         List<Materia> salida=new ArrayList<>();
-        for(Materia mat:lm)
-            if (mat.tieneCorrelativas()){
-                    salida.add(mat);
-            }
-        return salida;
-    }
-    
-    private List<Materia> getMatSigV2(Nodo nodo){
-        List<Materia> salida=new ArrayList<>();
-        Materia mat;
-        for (int i=0; i < nodo.getCantMaterias();i++){
-            mat = nodo.getMateria(i);
-            if (mat.tieneCorrelativas()){
-                    salida.add(mat);
-            }
+        Iterator<Materia> it=n.iterator();
+        Materia aux;
+        while (it.hasNext()){
+            aux= it.next();
+            if (aux.tieneCorrelativas()){
+                if (salida.isEmpty())
+                    salida.add(aux);
+                else{
+                    boolean mismasCorrelativas=false;
+                    for (Materia m: salida)
+                        if (m.mismasCorrelativas(aux))
+                            mismasCorrelativas=true;
+                    if (!mismasCorrelativas)
+                        salida.add(aux);
+                }
+            }         
         }
         return salida;
     }
-    
     
     private void CompletarLinea(Linea l,Materia m,int idLinea,List<Materia> Materias){
         if (m.tieneCorrelativas()){
             List<Integer> codMat=m.getCorrelatividades();
             
-            /*
             Nodo nodo= new Nodo();
             for(Integer i:codMat){
                 nodo.add(getMateriaXcod(i,Materias));
-                l.addNodo(nodo);
             }
+            l.addNodo(nodo);
             
-            List<Materia> Msig=getMatSigV2(nodo); 
-            */   
-            
-            
-            
-            List<Materia> Nodo=new ArrayList<>();
-            for(Integer i:codMat){
-                Nodo.add(getMateriaXcod(i,Materias));
-            }
-            l.addNodo(Nodo);
-            
-            List<Materia> Msig=getMatSig(Nodo);
-            
+            List<Materia> Msig=getMatSig(nodo);        
             if(Msig.isEmpty()){
                 Linea newLinea=l.clone();
-                idLinea++;
+                newLinea.setId(idLinea);
                 Lineas.add(newLinea);
             }
             else
@@ -178,14 +167,16 @@ public class Carrera{
              if (!Pertenece(m)){
                 l=new Linea(idLinea);
                 l.addMateria(m);
-                idLinea++;
-                if (!m.tieneCorrelativas())
+                if (!m.tieneCorrelativas()){
                     Lineas.add(l);
-                else
+                }
+                else{
                     CompletarLinea(l,m,idLinea,Materias);
+                }
+                idLinea++;
+                
              } 
         }
-        Lineas = new ArrayList<Linea>(new HashSet<Linea>(Lineas));
         return Lineas;
     }
 

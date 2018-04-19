@@ -11,6 +11,4 @@ package tpinvop;
  */
 public class GeneradorInformacion {
     
-    private void prueba(){}
-    
 }

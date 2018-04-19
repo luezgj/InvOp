@@ -6,27 +6,25 @@ import java.util.List;
 
 public class Linea {
     int id;
-    List<List<Materia>> Materias;
-    //List<Nodo> nodos;
+    List<Nodo> Materias;
     
     public Linea(int id){
         this.id=id;
         Materias = new ArrayList<>();
     }
     
-    public Linea(int id,List<List<Materia>> Materias){
-        this.id=id;
-        this.Materias = Materias;
-    } 
+    public void addMateria(Materia m){
+        Nodo aux=new Nodo();
+        aux.add(m);
+        Materias.add(aux);
+    }
     
-    public void addNodo(List<Materia> n){
+    public void addNodo(Nodo n){
         Materias.add(n);
     };
     
-    public void addMateria(Materia m){
-        List<Materia> lm=new ArrayList<>();
-        lm.add(m);
-        Materias.add(lm);
+    public void setMaterias(List<Nodo> ms){
+        Materias=ms;
     }
     
     public int getCantMaterias(){
@@ -35,20 +33,19 @@ public class Linea {
     
     public Linea clone(){
         Linea salida=new Linea(this.id);
-        List<List<Materia>> m=new ArrayList<>();
-        for(List<Materia> lm : Materias){
-            m.add(lm);
+        List<Nodo> ms=new ArrayList<>();
+        for(Nodo n : Materias){
+            Nodo nodoNew=n.clone();
+            ms.add(nodoNew);
         }
-        salida.setMaterias(m);
+        salida.setMaterias(ms);
         return salida;
     }
     
-    public boolean contiene(Materia m){
-        for(List<Materia> lm : Materias)
-            for(Materia mat:lm)
-                if (mat.equals(m)){
-                   return true;
-            }
+    public boolean contieneMateria(Materia m){
+        for(Nodo n : Materias)
+            if (n.contieneMateria(m))
+                return true;
         return false;
     }
 
@@ -57,18 +54,9 @@ public class Linea {
     }
     
     public void MostrarNodos(){
-        int i=1;
-        for(List<Materia> lm : Materias){
-            System.out.print("Nodo "+i+":  ");
-            for(Materia m:lm){
-                System.out.print(m.getCod()+" ");
-            }
-            i++;
+        for(Nodo n : Materias){
+            System.out.print(" "+n.toString()+ " - ");
         }
-    }
-
-    public void setMaterias(List<List<Materia>> Materias) {
-        this.Materias = Materias;
     }
 
     public void setId(int id) {

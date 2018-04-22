@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 //********************************************************************
@@ -235,10 +236,13 @@ public class AdminBD {
         this.createNodeView(viewName, l);
     }
 
-    //returns the 
-    public List getPassPercentage(Nodo n){
+    //returns a
+    //Devolvemos sólo un porcentaje por año sin importar qué año es
+    public List<Float> getPassPercentage(Nodo n){
+        List<Float> porcentajes=new ArrayList<>();
         
         
+        return porcentajes;
     }
     
     public boolean dbOK(){

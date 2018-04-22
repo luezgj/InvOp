@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -179,5 +180,14 @@ public class Carrera{
         }
         return Lineas;
     }
+    
+    public List<Linea> getLineas() {
+        List<Linea> out = new LinkedList<>();
+        for (Linea l : Lineas) {
+            out.add(l);
+        }
+        return out;
+    }
+    
 
 }

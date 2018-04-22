@@ -1,10 +1,11 @@
 package tpinvop;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
-public class Linea {
+public class Linea implements Iterable<Nodo>{
     int id;
     List<Nodo> Materias;
     
@@ -65,6 +66,11 @@ public class Linea {
     
     public void eliminarUltimoNodo(){
         Materias.remove(Materias.size()-1);
+    }
+
+    @Override
+    public Iterator<Nodo> iterator() {
+        return Materias.iterator();
     }
     
 }

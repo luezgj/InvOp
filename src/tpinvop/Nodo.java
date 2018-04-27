@@ -8,7 +8,9 @@ public class Nodo implements Iterable<Materia> {
     List<Materia> Materias;
     
     public Nodo(){
+        
         Materias= new ArrayList<>();
+      
     }
     
     public void add(Materia m){
@@ -47,6 +49,10 @@ public class Nodo implements Iterable<Materia> {
         Iterator it = new IteratorMateria();
         return it;         
     }
+
+    public int getCantMaterias(){
+            return Materias.size();
+    }
     
     protected class IteratorMateria implements Iterator<Materia>
     {
@@ -76,6 +82,6 @@ public class Nodo implements Iterable<Materia> {
             throw new UnsupportedOperationException("No soportado.");
 
         }
-
+        
     }
 }

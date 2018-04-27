@@ -224,9 +224,79 @@ public class AdminBD {
     
     //Updates the view created with data asociated to multiple subject node in lines
     private void createNodeView(String viewName, List<Nodo> l){
-        //********************************************************
-        //                  CREAR PROCEDURE DE SQL
-        //********************************************************
+        try{
+
+            if(!con.isClosed()){
+
+                //Create procedure to update view
+                String sql = "CREATE OR REPLACE FUNCTION createNodeView(viewName character varying ,nodeName character varying,subjectNames character varying[]) RETURNS void AS $$ \n"
+                        + "BEGIN \n"
+                        + "	INSERT INTO viewName\n"
+                        + "	SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, (t.total-aprobados) as desaprobados\n"
+                        + "	FROM\n"
+                        + "		//Sacamos la cuenta de los que cursaron alguna materia\n"
+                        + "		(SELECT año,count(*) as total FROM\n"
+                        + "			SELECT año, legajo\n"
+                        + "			FROM cursadas\n"
+                        + "			WHERE nombre = ANY (subjectNames)\n"
+                        + "			GROUP BY año, legajo \n"
+                        + "		GROUP BY año) AS t\n"
+                        + "	FULL JOIN \n"
+                        + "		//Sacamos la cuenta de los que aprobaron todas las materias\n"
+                        + "		(SELECT año,count(*) as aprobados FROM\n"
+                        + "			SELECT año, legajo\n"
+                        + "			FROM cursadas\n"
+                        + "			WHERE nombre = ANY (subjectNames) and resultado='A'\n"
+                        + "			GROUP BY año, legajo\n"
+                        + "			HAVING count(*)=array_length(subjectNames, 1)\n"
+                        + "		GROUP BY año) as a\n"
+                        + "	ON (t.año=a.año);\n"
+                        + "END;\n"
+                        + "$$ LANGUAGE plpgsql;";
+                try{
+                    Statement stmt = con.createStatement();
+                    stmt.execute(sql);
+                }
+                catch(SQLException sqle){
+                    InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
+                                ") "+sqle.getMessage(), "Error de SQL");
+                }
+                
+                
+                //Execute procedure for each node
+                int nroNodo=0;
+                for(Nodo n: l){
+                    try {
+                        
+                        String[] materias= new String[n.getCantMaterias()];
+                        int i=0;
+                        for(Materia m:n){
+                            materias[i]=m.getNombre();
+                            i++;
+                        }
+                        java.sql.Array arrayMaterias= con.createArrayOf("varchar", materias);
+                        
+                        sql="SELECT * FROM createNodeView (?, ?, ?)";
+                        PreparedStatement pstmt = con.prepareStatement(sql);
+                        pstmt.setString(1,viewName);
+                        pstmt.setString(2,"Nodo"+nroNodo);
+                        pstmt.setArray(3, arrayMaterias);
+                        pstmt.execute();
+                    } catch (SQLException sqle) {
+                        InfoMsgBox.errBox("COD " + sqle.getErrorCode()
+                                + ") " + sqle.getMessage(), "Error de SQL");
+                    }
+                    nroNodo++;
+                }
+            }
+            else
+                InfoMsgBox.infoBox("La conexion con la base de datos ha sido cerrada, por favor reconectar."
+                        ,"Atencion");
+        }
+        catch(SQLException sqle){
+            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
+                        ") "+sqle.getMessage(), "Error de DBMS");
+        }
     }
     
     //public method for constructing the data view

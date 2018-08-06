@@ -35,7 +35,7 @@ public class Cadena {
     
     public float getProbDesaprobar(int nroNodo){
         if(nroNodo<l.getCantMaterias()){
-            return prob[nroNodo];
+            return 1-prob[nroNodo];
         }
         return -1;
     }

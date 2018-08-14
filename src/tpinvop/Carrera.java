@@ -28,6 +28,8 @@ public class Carrera{
              
     }
     
+    
+    //Metodo para obtener desde un archivo la lista de materias para generar las lineas a analizar
     private void getMaterias(String ruta,List<Materia> Materias) {
         File archivo;
         FileInputStream is;
@@ -39,7 +41,7 @@ public class Carrera{
                 InputStreamReader isr = new InputStreamReader(is, "ISO-8859-1");
 		br = new BufferedReader(isr);
                 
-                String linea;
+        String linea;
 		while((linea=br.readLine())!=null){
                     getInfoMateria(linea,Materias);
                 }
@@ -58,8 +60,10 @@ public class Carrera{
         Collections.reverse(Materias);
     }
     
+    //Metodo que obtiene de cada linea del archivo los datos de cada materia
+    //Formato? : [CodMateria\tab\NomMateria\tab\{Correlativas\,\}]
     private void getInfoMateria(String linea,List<Materia> Materias){
-        String lineaMod = "    " + linea;
+        String lineaMod = "		" + linea;
         String [] partes = lineaMod.split("    ");
        
         int cod=Integer.parseInt(partes[1]);

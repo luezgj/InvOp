@@ -253,6 +253,32 @@ public class AdminBD {
                         + "	ON (t.año=a.año);\n"
                         + "END;\n"
                         + "$$ LANGUAGE plpgsql;";
+                /*Este anda bien(solo compila):
+                CREATE OR REPLACE FUNCTION createNodeView(viewName character varying ,nodeName character varying,subjectNames character varying[]) RETURNS void AS $$
+                BEGIN 
+                INSERT INTO viewName
+                SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, (t.total-aprobados) as desaprobados
+                FROM
+                --Sacamos la cuenta de los que cursaron alguna materia
+                                (SELECT año,count(*) as total FROM
+                                        (SELECT año, legajo
+                                        FROM cursadas
+                                        WHERE nombre = ANY (subjectNames)
+                                        GROUP BY año, legajo) as ax1
+                                GROUP BY año) AS t
+                        FULL JOIN 
+                                --Sacamos la cuenta de los que aprobaron todas las materias
+                                (SELECT año,count(*) as aprobados FROM
+                                        (SELECT año, legajo
+                                        FROM cursadas
+                                        WHERE nombre = ANY (subjectNames) and resultado='A'
+                                        GROUP BY año, legajo
+                                        HAVING count(*)=array_length(subjectNames, 1)) as ax2
+                                GROUP BY año) as a
+                        ON (t.año=a.año);
+                END;
+                $$ LANGUAGE plpgsql;*/
+                
                 try{
                     Statement stmt = con.createStatement();
                     stmt.execute(sql);

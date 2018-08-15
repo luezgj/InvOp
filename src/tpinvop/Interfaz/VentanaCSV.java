@@ -133,8 +133,9 @@ public class VentanaCSV extends javax.swing.JFrame {
         VentanaResultados window=new VentanaResultados();
         
         Carrera IngSist=new Carrera("Ingeniero en Sistemas",pathCorrelativas);
-        String contenido=IngSist.mostrarLineas();
-        window.setTextPan(contenido);
+        //Comentado por lucho xq no anda:
+        //String contenido=IngSist.mostrarLineas();
+        //window.setTextPan(contenido);
         
         //AdminBD javaPostgreSQLBasic = new AdminBD();
         //javaPostgreSQLBasic.loadCSV(pathCSV);

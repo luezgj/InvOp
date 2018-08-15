@@ -38,7 +38,7 @@ public class Nodo implements Iterable<Materia> {
     public String toString(){
         String contenido="";
         for(Materia m:Materias){
-            contenido+=m.getCod();
+            contenido+=m.getNombre();
             contenido+=" ";
         }
         

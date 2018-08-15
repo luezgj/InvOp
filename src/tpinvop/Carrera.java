@@ -63,12 +63,12 @@ public class Carrera{
     //Metodo que obtiene de cada linea del archivo los datos de cada materia
     //Formato? : [CodMateria\tab\NomMateria\tab\{Correlativas\,\}]
     private void getInfoMateria(String linea,List<Materia> Materias){
-        String lineaMod = "		" + linea;
-        String [] partes = lineaMod.split("    ");
+        //String lineaMod = "	" + linea;
+        String [] partes = linea.split("	");
        
-        int cod=Integer.parseInt(partes[1]);
-        String nombre=new String(partes[2]);
-        List<Integer> cs=getListCorrelatividades(partes[3]);
+        int cod=Integer.parseInt(partes[0].trim());
+        String nombre=new String(partes[1].trim());
+        List<Integer> cs=getListCorrelatividades(partes[2].trim());
         
         Materia m= new Materia(cod,nombre,cs);
         Materias.add(m);
@@ -81,7 +81,7 @@ public class Carrera{
         if (partes[1].equals("-"))
             return salida;
         for (int i=1; i < partes.length ; i++){
-            Integer cod=Integer.parseInt(partes[i]);
+            Integer cod=Integer.parseInt(partes[i].trim());
             salida.add(cod);
         }
         return salida;

@@ -1,34 +1,35 @@
-6111 	IntroducciÃ³n a la ProgramaciÃ³n I 	-
-6112 	AnÃ¡lisis MatemÃ¡tico I 	-
-6113 	Ãlgebra I 	-
-6114 	QuÃ­mica 	-
-6121 	Ciencias de la ComputaciÃ³n I 	-
-6122 	IntroducciÃ³n a la ProgramaciÃ³n II 	6111
-6123 	Ãlgebra Lineal 	6113
-6124 	FÃ­sica General 	6112
-6125 	MatemÃ¡tica Discreta 	6113
-6211 	Ciencias de la ComputaciÃ³n II 	6121, 6122, 6125
-6212 	AnÃ¡lisis y DiseÃ±o de Algoritmos I 	6121, 6122, 6125
-6213 	IntroducciÃ³n a la Arquitectura de Sistemas 	6122
-6214 	AnÃ¡lisis MatemÃ¡tico II 	6112
-6215 	Electricidad y Magnetismo 	6124
-6221 	AnÃ¡lisis y DiseÃ±o de Algoritmos II 	6211, 6212
-6222 	ComunicaciÃ³n de Datos I 	6213
-6223 	Probabilidades y EstadÃ­stica 	6214, 6123, 6125
-6224 	ElectrÃ³nica Digital 	6215
-6311 	ProgramaciÃ³n Orientada a Objetos 	6221
-6312 	Estructuras de Almacenamiento de Datos 	6221, 6223
-6313 	MetodologÃ­as de Desarrollo de Software 	6221
-6314 	Arquitectura de Computadoras I 	6213, 6224
-6321 	ProgramaciÃ³n Exploratoria 	6221
-6322 	Base de Datos I 	6312, 6313
-6323 	Lenguajes de ProgramaciÃ³n I 	6311
-6324 	Sistemas Operativos I 	6312, 6314
-6325 	InvestigaciÃ³n Operativa I 	6214, 6223
-6411 	Arq. de Computadoras y TÃ©cnicas Digitales 	6314
-6412 	TeorÃ­a de la InformaciÃ³n 	6212, 6222, 6223
-6413 	ComunicaciÃ³n de Datos II 	6222, 6324
-6414 	IntroducciÃ³n al CÃ¡lculo Diferencial e Integral 	6214
-6421 	DiseÃ±o de Sistemas de Software 	6311, 6322, 6324
-6422 	DiseÃ±o de Compiladores I 	6323
-6511 	IngenierÃ­a de Software 	6421
+6111    Introducción a la Programación I    -
+6112    Análisis Matemático I    -
+6113    Álgebra I    -
+6114    Química    -
+6121    Ciencias de la Computación I    -
+6122    Introducción a la Programación II    6111
+6123    Álgebra Lineal    6113
+6124    Física General    6112
+6125    Matemática Discreta    6113
+6211    Ciencias de la Computación II    6121,6122,6125
+6212    Análisis y Diseño de Algoritmos I    6121,6122,6125
+6213    Introducción a la Arquitectura de Sistemas    6122
+6214    Análisis Matemático II    6112
+6215    Electricidad y Magnetismo    6124
+6221    Análisis y Diseño de Algoritmos II    6211,6212
+6222    Comunicación de Datos I    6213
+6223    Probabilidades y Estadística    6214,6123,6125
+6224    Electrónica Digital    6215
+6225    Ingles    -
+6311    Programación Orientada a Objetos    6221
+6312    Estructuras de Almacenamiento de Datos	    6221,6223
+6313    Metodologías de Desarrollo de Software    6221
+6314    Arquitectura de Computadoras I    6213,6224
+6321    Programación Exploratoria    6221
+6322    Base de Datos I    6312,6313
+6323    Lenguajes de Programación I    6311
+6324    Sistemas Operativos I    6312,6314
+6325    Investigación Operativa I    6214,6223
+6411    Arq. de Computadoras y Técnicas Digitales    6314
+6412    Teoría de la Información    6212,6222,6223
+6413    Comunicación de Datos II    6222,6324
+6414    Introducción al Cálculo Diferencial e Integral    6214
+6421    Diseño de Sistemas de Software    6311,6322,6324
+6422    Diseño de Compiladores I    6323
+6511    Ingeniería de Software    6421

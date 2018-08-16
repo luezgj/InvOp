@@ -7,10 +7,8 @@ import java.util.Iterator;
 public class Nodo implements Iterable<Materia> {
     List<Materia> Materias;
     
-    public Nodo(){
-        
+    public Nodo(){ 
         Materias= new ArrayList<>();
-      
     }
     
     public void add(Materia m){

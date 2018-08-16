@@ -64,7 +64,7 @@ public class Carrera{
     //Formato? : [CodMateria\tab\NomMateria\tab\{Correlativas\,\}]
     private void getInfoMateria(String linea,List<Materia> Materias){
         //String lineaMod = "	" + linea;
-        String [] partes = linea.split("	");
+        String [] partes = linea.split("    ");
        
         int cod=Integer.parseInt(partes[0].trim());
         String nombre=new String(partes[1].trim());
@@ -153,6 +153,7 @@ public class Carrera{
             if(Msig.isEmpty()){
                 Linea newLinea=l.clone();
                 newLinea.setId(idLinea);
+                newLinea.invertir();
                 Lineas.add(newLinea);
             }
             else
@@ -182,6 +183,7 @@ public class Carrera{
                 
              } 
         }
+        
         return Lineas;
     }
     

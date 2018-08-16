@@ -1,0 +1,19 @@
+6111    Introducción a la Programación I    -
+6112    Análisis Matemático I    -
+6113    Álgebra I    -
+6114    Química    -
+6121    Ciencias de la Computación I    -
+6122    Introducción a la Programación II    6111
+6123    Álgebra Lineal    6113
+6124    Física General    6112
+6125    Matemática Discreta    6113
+6211    Ciencias de la Computación II    6121,6122,6125
+6212    Análisis y Diseño de Algoritmos I    6121,6122,6125
+6213    Introducción a la Arquitectura de Sistemas    6122
+6214    Análisis Matemático II    6112
+6215    Electricidad y Magnetismo    6124
+6221    Análisis y Diseño de Algoritmos II    6211,6212
+6222    Comunicación de Datos I    6213
+6223    Probabilidades y Estadística    6214,6123,6125
+6224    Electrónica Digital    6215
+6225    Ingles    -

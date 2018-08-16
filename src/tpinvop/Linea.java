@@ -1,6 +1,7 @@
 package tpinvop;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,6 +69,10 @@ public class Linea implements Iterable<Nodo>{
         Materias.remove(Materias.size()-1);
     }
 
+    public void invertir(){
+        Collections.reverse(Materias);
+    }
+    
     @Override
     public Iterator<Nodo> iterator() {
         return Materias.iterator();

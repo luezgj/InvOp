@@ -17,7 +17,7 @@ import java.util.List;
 public class AdminBD {
     
     Connection con;
-    
+    /*
     public Connection connectDatabase() {
         
         Connection connection = null;
@@ -50,7 +50,23 @@ public class AdminBD {
         }
         
         return connection;
-    } 
+    } */
+    
+    
+    public void connectDatabase() {
+        try {
+            try { 
+                Class.forName("org.postgresql.Driver");
+            } catch (ClassNotFoundException ex) {
+                System.out.println("Error al registrar el driver de PostgreSQL: " + ex);
+            }
+            String urlDatabase =  "jdbc:postgresql://localhost:5432/invopdb"; 
+            con = DriverManager.getConnection(urlDatabase,  "invop", "12345");
+            } 
+        catch (java.sql.SQLException sqle) {
+            System.out.println("Error: " + sqle);
+        }
+    }
     
     public void createTable(String dbName){  // Creates a table with the specified name
         

@@ -62,6 +62,7 @@ public class AdminBD {
             }
             String urlDatabase =  "jdbc:postgresql://localhost:5432/invopdb"; 
             con = DriverManager.getConnection(urlDatabase,  "invop", "12345");
+            System.out.println("Conectado");
             } 
         catch (java.sql.SQLException sqle) {
             System.out.println("Error: " + sqle);
@@ -90,6 +91,7 @@ public class AdminBD {
             
             stmt = con.createStatement();
             stmt.executeUpdate(sql);
+            System.out.println("Tabla cursadas creada correctamente");
             
         }
         catch(SQLException sqle){

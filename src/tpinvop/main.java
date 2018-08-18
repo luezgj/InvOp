@@ -7,6 +7,6 @@ public class main {
        AdminBD javaPostgreSQLBasic = new AdminBD();
        
        javaPostgreSQLBasic.connectDatabase();
-       
+       javaPostgreSQLBasic.createDB("noImportaXqNoSeUsa");
     }
 }

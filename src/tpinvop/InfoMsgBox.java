@@ -18,7 +18,7 @@ public class InfoMsgBox {
     }
     
     public static void errBox(String errMsg, String titleBar){
-        JOptionPane.showMessageDialog(null, errMsg, "InfoBox: " + titleBar, JOptionPane.ERROR);
+        JOptionPane.showMessageDialog(null, errMsg, "InfoBox: " + titleBar, JOptionPane.ERROR_MESSAGE);
     }
             
 }

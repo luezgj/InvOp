@@ -5,6 +5,8 @@
  */
 package tpinvop.Interfaz;
 
+import javax.swing.UIManager;
+
 /**
  *
  * @author Administrador
@@ -33,7 +35,6 @@ public class VentanaBD extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
 
         jButton1.setText("Resultados");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -78,12 +79,7 @@ public class VentanaBD extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(VentanaBD.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {

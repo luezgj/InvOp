@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import tpinvop.Carrera;
 import tpinvop.Linea;
 import tpinvop.Materia;
@@ -21,13 +22,13 @@ public class VentanaResultados extends javax.swing.JFrame {
     final static private int ALTO_BLOQUE = 50;   
     Object parent;
     
-    VentanaPrincipal vp;
-    //private VentanaPrincipal padre = (VentanaPrincipal)this.getParent();
     public VentanaResultados() {
-        //initComponents();
         super("Cadenas");
         setSize(800,600);
         this.setLocationRelativeTo(null);
+    }
+
+    void crearCadenas(String dirCorrelativas){
         graph = new mxGraph();
         graphComponent = new mxGraphComponent(graph);
         graphComponent.setPreferredSize(new Dimension(400,400));
@@ -36,14 +37,8 @@ public class VentanaResultados extends javax.swing.JFrame {
        
         graph.getModel().beginUpdate();
         
-        crearCadenas();
-        
-        graph.getModel().endUpdate();
-    }
-
-    void crearCadenas(){
         parent = graph.getDefaultParent();
-        Carrera IngSist=new Carrera("Ingeniero en Sistemas","recursos/Correlatividades.txt");
+        Carrera IngSist=new Carrera("Ingeniero en Sistemas",dirCorrelativas);
         List<Linea> Lineas = IngSist.getLineas(); 
         int distanciaYEntreBloques = 5;
               
@@ -51,6 +46,8 @@ public class VentanaResultados extends javax.swing.JFrame {
             crearVertices(l,distanciaYEntreBloques);
             distanciaYEntreBloques+=DISTANCIAY_ENTRE_BLOQUES;
        }  
+        
+        graph.getModel().endUpdate();
     }
     
     void crearVertices(Linea l,int posY){
@@ -91,19 +88,11 @@ public class VentanaResultados extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-
-        jButton1.setText("Volver");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         jScrollPane2.setViewportView(jTextPane1);
 
@@ -112,33 +101,20 @@ public class VentanaResultados extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(189, 189, 189)
-                        .addComponent(jButton1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(40, 40, 40)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(21, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(210, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(60, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        vp = new VentanaPrincipal();
-        this.setVisible(false);
-        vp.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -149,13 +125,14 @@ public class VentanaResultados extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
+        try {/*
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
-            }
+            }*/
+            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -180,7 +157,6 @@ public class VentanaResultados extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables

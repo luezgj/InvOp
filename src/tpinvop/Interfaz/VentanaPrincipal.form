@@ -7,7 +7,6 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="undecorated" type="boolean" value="true"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -29,26 +28,35 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <Component id="jLabelFondo" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="1" attributes="0">
-              <EmptySpace min="0" pref="74" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Component id="Salir" min="-2" pref="69" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
+                  <Component id="jLabelFondo" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="Opcion3" min="-2" max="-2" attributes="0"/>
-                          <Component id="Opcion2" min="-2" max="-2" attributes="0"/>
-                          <Component id="Opcion1" min="-2" pref="140" max="-2" attributes="0"/>
-                          <Component id="Ejecutar" alignment="0" min="-2" pref="90" max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" pref="190" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="Opcion2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="Opcion1" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
+                                  <Component id="Opcion3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace min="16" pref="16" max="-2" attributes="0"/>
+                              <Component id="Salir" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="Ejecutar" min="-2" pref="90" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
+              <EmptySpace pref="38" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -56,17 +64,21 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <Component id="jLabelFondo" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-              <Component id="Opcion1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-              <Component id="Opcion2" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-              <Component id="Opcion3" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-              <Component id="Ejecutar" min="-2" pref="50" max="-2" attributes="0"/>
-              <EmptySpace pref="50" max="32767" attributes="0"/>
-              <Component id="Salir" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" pref="36" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+              <Component id="Opcion1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="Opcion2" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="Opcion3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="24" max="32767" attributes="0"/>
+              <Component id="Ejecutar" min="-2" pref="50" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="Salir" min="-2" pref="23" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -99,11 +111,24 @@
     </Component>
     <Component class="javax.swing.JButton" name="Ejecutar">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Ejecutar"/>
+        <Property name="text" type="java.lang.String" value="Continuar"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="EjecutarActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Tahoma" size="14" style="3"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Analizador de carreras"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Opciones:"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -8,6 +8,7 @@ package tpinvop.Interfaz;
 import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.UIManager;
 import tpinvop.AdminBD;
 import tpinvop.Carrera;
 
@@ -41,14 +42,13 @@ public class VentanaCSV extends javax.swing.JFrame {
     private void initComponents() {
 
         BotonContinuar = new javax.swing.JButton();
-        BotonExaminar = new javax.swing.JButton();
+        BotonExaminarCSV = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        BotonExaminar1 = new javax.swing.JButton();
+        BotonExaminarCorrelativas = new javax.swing.JButton();
         BotonVolver = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
 
         BotonContinuar.setText("Continuar");
         BotonContinuar.addActionListener(new java.awt.event.ActionListener() {
@@ -57,19 +57,19 @@ public class VentanaCSV extends javax.swing.JFrame {
             }
         });
 
-        BotonExaminar.setText("Examinar");
-        BotonExaminar.addActionListener(new java.awt.event.ActionListener() {
+        BotonExaminarCSV.setText("Examinar");
+        BotonExaminarCSV.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BotonExaminarActionPerformed(evt);
+                BotonExaminarCSVActionPerformed(evt);
             }
         });
 
         jLabel1.setText("Seleccionar Archivo de Correlativas");
 
-        BotonExaminar1.setText("Examinar");
-        BotonExaminar1.addActionListener(new java.awt.event.ActionListener() {
+        BotonExaminarCorrelativas.setText("Examinar");
+        BotonExaminarCorrelativas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BotonExaminar1ActionPerformed(evt);
+                BotonExaminarCorrelativasActionPerformed(evt);
             }
         });
 
@@ -92,11 +92,11 @@ public class VentanaCSV extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                        .addComponent(BotonExaminar1))
+                        .addComponent(BotonExaminarCorrelativas))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BotonExaminar)))
+                        .addComponent(BotonExaminarCSV)))
                 .addGap(18, 18, 18))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(61, 61, 61)
@@ -110,11 +110,11 @@ public class VentanaCSV extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BotonExaminar)
+                    .addComponent(BotonExaminarCSV)
                     .addComponent(jLabel2))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BotonExaminar1)
+                    .addComponent(BotonExaminarCorrelativas)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -128,19 +128,17 @@ public class VentanaCSV extends javax.swing.JFrame {
 
     private void BotonContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonContinuarActionPerformed
         if (pathCorrelativas != null){
-        
-        this.setVisible(false);
-        VentanaResultados window=new VentanaResultados();
-        
-        Carrera IngSist=new Carrera("Ingeniero en Sistemas",pathCorrelativas);
-        //Comentado por lucho xq no anda:
-        //String contenido=IngSist.mostrarLineas();
-        //window.setTextPan(contenido);
-        
-        //AdminBD javaPostgreSQLBasic = new AdminBD();
-        //javaPostgreSQLBasic.loadCSV(pathCSV);
-        
-        window.setVisible(true);
+            this.setVisible(false);
+            VentanaResultados ventana=new VentanaResultados();
+            ventana.setVisible(true);
+            ventana.crearCadenas(pathCorrelativas);
+            //Carrera IngSist=new Carrera("Ingeniero en Sistemas",pathCorrelativas);
+            //Comentado por lucho xq no anda:
+            //String contenido=IngSist.mostrarLineas();
+            //window.setTextPan(contenido);
+
+            //AdminBD javaPostgreSQLBasic = new AdminBD();
+            //javaPostgreSQLBasic.loadCSV(pathCSV);
         }
         else{
             VentanaError vr=new VentanaError();
@@ -149,7 +147,35 @@ public class VentanaCSV extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_BotonContinuarActionPerformed
 
-    private void BotonExaminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExaminarActionPerformed
+    private void BotonExaminarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExaminarCSVActionPerformed
+        JButton btn = (JButton)evt.getSource();
+        if( btn.getText().equals( "Examinar" ) )
+        {
+            if( abrirArchivo == null ) abrirArchivo = new JFileChooser();
+            //Con esto solamente podamos abrir archivos
+            abrirArchivo.setFileSelectionMode( JFileChooser.FILES_ONLY );
+ 
+            int seleccion = abrirArchivo.showOpenDialog( this );
+ 
+            if( seleccion == JFileChooser.APPROVE_OPTION )
+            {
+                File f = abrirArchivo.getSelectedFile();
+                try
+                {
+                    String nombre = f.getName();
+                    pathCSV = f.getAbsolutePath();
+                    //Colocamos en el titulo de la aplicacion el 
+                    //nombre del archivo
+                    this.setTitle( nombre );
+ 
+                    //En el editor de texto colocamos su contenido
+ 
+                }catch( Exception exp){}
+            }
+        }
+    }//GEN-LAST:event_BotonExaminarCSVActionPerformed
+
+    private void BotonExaminarCorrelativasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExaminarCorrelativasActionPerformed
         JButton btn = (JButton)evt.getSource();
         if( btn.getText().equals( "Examinar" ) )
         {
@@ -176,36 +202,7 @@ public class VentanaCSV extends javax.swing.JFrame {
                 }catch( Exception exp){}
             }
         }
-    }//GEN-LAST:event_BotonExaminarActionPerformed
-
-    private void BotonExaminar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExaminar1ActionPerformed
-        JButton btn = (JButton)evt.getSource();
-        if( btn.getText().equals( "Examinar" ) )
-        {
-            if( abrirArchivo == null ) abrirArchivo = new JFileChooser();
-            //Con esto solamente podamos abrir archivos
-            abrirArchivo.setFileSelectionMode( JFileChooser.FILES_ONLY );
- 
-            int seleccion = abrirArchivo.showOpenDialog( this );
- 
-            if( seleccion == JFileChooser.APPROVE_OPTION )
-            {
-                File f = abrirArchivo.getSelectedFile();
-                try
-                {
-                    String nombre = f.getName();
-                    pathCSV = f.getAbsolutePath();
-                    
-                    //Colocamos en el titulo de la aplicacion el 
-                    //nombre del archivo
-                    this.setTitle( nombre );
- 
-                    //En el editor de texto colocamos su contenido
- 
-                }catch( Exception exp){}
-            }
-        }
-    }//GEN-LAST:event_BotonExaminar1ActionPerformed
+    }//GEN-LAST:event_BotonExaminarCorrelativasActionPerformed
 
     private void BotonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonVolverActionPerformed
         vp=new VentanaPrincipal();
@@ -223,12 +220,7 @@ public class VentanaCSV extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
+            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(VentanaCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -250,8 +242,8 @@ public class VentanaCSV extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BotonContinuar;
-    private javax.swing.JButton BotonExaminar;
-    private javax.swing.JButton BotonExaminar1;
+    private javax.swing.JButton BotonExaminarCSV;
+    private javax.swing.JButton BotonExaminarCorrelativas;
     private javax.swing.JButton BotonVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -2,12 +2,15 @@ package tpinvop;
 
 import java.sql.*;
 import java.io.BufferedReader;
+import java.io.Reader;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.postgresql.core.BaseConnection;
+import org.postgresql.copy.CopyManager;
 
 //********************************************************************
 // AdminDB CLASS: Provides Database conectivity through JDBC API. 
@@ -80,7 +83,7 @@ public class AdminBD {
                 + "materia int,"
                 + "fecha_regularidad date,"
                 + "resultado char(1),"
-                + "nota numeric(2,2),"
+                + "nota numeric(4,2),"
                 + "origen varchar,"
                 + "nombre varchar);";
         
@@ -135,29 +138,28 @@ public class AdminBD {
         try{
             if(!con.isClosed()){
 
-                String sql = "COPY persons(first_name,last_name,dob,email) \n" +
-                        "FROM 'C:\\tmp\\persons.csv' DELIMITER ',' CSV HEADER;";
+              
+                String sql = "copy cursadas FROM stdin DELIMITER ',' CSV header";
 
+                BaseConnection pgcon = (BaseConnection)con;
+                CopyManager mgr = new CopyManager(pgcon);
+                
+                
+                
                 try{
-                    File f = new File(dirA);
-                    FileInputStream is = new FileInputStream(f);
-                    Statement stmt;
+                    Reader in = new BufferedReader(new FileReader(new File(dirA)));
+                    long rowsaffected  = mgr.copyIn(sql, in);
 
-                    try{
-
-                        stmt = con.createStatement();
-                        stmt.execute(sql);
-                    }
-                    catch(SQLException sqle){
-
-                        InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
+                    System.out.println("CSV cargado correctamente. Filas copiadas: " + rowsaffected);
+                }
+                catch(IOException io_exept){
+                    InfoMsgBox.errBox("Error de entrada/salida: "+io_exept.getMessage(), "Error");
+                }
+                catch(SQLException sqle){
+                    InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
                                 ") "+sqle.getMessage(), "Error de SQL");
-                    }
-
                 }
-                catch(FileNotFoundException e){
-                    InfoMsgBox.errBox("El archivo no se ha encontrado."+e.getMessage(), "Error");
-                }
+            
             }
         }
         catch(SQLException sqle){
@@ -182,6 +184,7 @@ public class AdminBD {
                 try{
                     Statement stmt = con.createStatement();
                     stmt.execute(sql);
+                    System.out.println("Filas filtradas.");
                 }
                 catch(SQLException sqle){
                     InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
@@ -203,23 +206,23 @@ public class AdminBD {
         try{
 
             if(!con.isClosed()){
-
-                String sql = "CREATE VIEW "+viewName+"/n"+ 
-                    "SELECT coalesce(ap.año, des.año) as año, "+
-                    "coalesce(ap.nombre, des.nombre) as nombre, "+
-                    "coalesce(aprobados,0) as aprobados, "+
-                    "coalesce(desaprobados,0) as desaprobados /n"+
-                    "FROM" + 
-                    "(SELECT nombre, extract(year from fecha_regularidad) as año , count(*) as aprobados /n"+ 
-                    "FROM "+ tableName+"/n"+
-                    "WHERE resultado='A' or resultado='P' /n"+
-                    "GROUP BY nombre, año) AS ap /n"+
-                    "FULL JOIN /n"+ 
-                    "(SELECT nombre, extract(year from fecha_regularidad) as año , count(*) as desaprobados /n"+
-                    "FROM "+ tableName+"/n"+
-                    "WHERE resultado='R' or resultado='U' /n"+
-                    "GROUP BY nombre, año) AS des /n"+
-                    "ON (ap.nombre=des.nombre and ap.año=des.año)";
+                
+                
+                String sql= "CREATE VIEW "+ viewName +" AS SELECT coalesce(ap.año, des.año) as año, \n" +
+"                    coalesce(ap.nombre, des.nombre) as nombre, \n" +
+"                    coalesce(aprobados,0) as aprobados, \n" +
+"                    coalesce(desaprobados,0) as desaprobados \n" +
+"                    FROM\n" +
+"                    (SELECT nombre, extract(year from fecha_regularidad) as año , count(*) as aprobados \n" +
+"	                    FROM "+ tableName +" \n" +
+"	                    WHERE resultado='A' or resultado='P' \n" +
+"	                    GROUP BY nombre, año) AS ap \n" +
+"                    FULL JOIN \n" +
+"                    (SELECT nombre, extract(year from fecha_regularidad) as año , count(*) as desaprobados \n" +
+"	                    FROM "+ tableName +" \n" +
+"	                    WHERE resultado='R' or resultado='U' \n" +
+"	                    GROUP BY nombre, año) AS des \n" +
+"                    ON (ap.nombre=des.nombre and ap.año=des.año)";
 
                 try{
                     Statement stmt = con.createStatement();
@@ -247,59 +250,35 @@ public class AdminBD {
             if(!con.isClosed()){
 
                 //Create procedure to update view
-                String sql = "CREATE OR REPLACE FUNCTION createNodeView(viewName character varying ,nodeName character varying,subjectNames character varying[]) RETURNS void AS $$ \n"
-                        + "BEGIN \n"
-                        + "	INSERT INTO viewName\n"
-                        + "	SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, (t.total-aprobados) as desaprobados\n"
-                        + "	FROM\n"
-                        + "		//Sacamos la cuenta de los que cursaron alguna materia\n"
-                        + "		(SELECT año,count(*) as total FROM\n"
-                        + "			SELECT año, legajo\n"
-                        + "			FROM cursadas\n"
-                        + "			WHERE nombre = ANY (subjectNames)\n"
-                        + "			GROUP BY año, legajo \n"
-                        + "		GROUP BY año) AS t\n"
-                        + "	FULL JOIN \n"
-                        + "		//Sacamos la cuenta de los que aprobaron todas las materias\n"
-                        + "		(SELECT año,count(*) as aprobados FROM\n"
-                        + "			SELECT año, legajo\n"
-                        + "			FROM cursadas\n"
-                        + "			WHERE nombre = ANY (subjectNames) and resultado='A'\n"
-                        + "			GROUP BY año, legajo\n"
-                        + "			HAVING count(*)=array_length(subjectNames, 1)\n"
-                        + "		GROUP BY año) as a\n"
-                        + "	ON (t.año=a.año);\n"
-                        + "END;\n"
-                        + "$$ LANGUAGE plpgsql;";
-                /*Este anda bien(solo compila):
-                CREATE OR REPLACE FUNCTION createNodeView(viewName character varying ,nodeName character varying,subjectNames character varying[]) RETURNS void AS $$
-                BEGIN 
-                INSERT INTO viewName
-                SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, (t.total-aprobados) as desaprobados
-                FROM
-                --Sacamos la cuenta de los que cursaron alguna materia
-                                (SELECT año,count(*) as total FROM
-                                        (SELECT año, legajo
-                                        FROM cursadas
-                                        WHERE nombre = ANY (subjectNames)
-                                        GROUP BY año, legajo) as ax1
-                                GROUP BY año) AS t
-                        FULL JOIN 
-                                --Sacamos la cuenta de los que aprobaron todas las materias
-                                (SELECT año,count(*) as aprobados FROM
-                                        (SELECT año, legajo
-                                        FROM cursadas
-                                        WHERE nombre = ANY (subjectNames) and resultado='A'
-                                        GROUP BY año, legajo
-                                        HAVING count(*)=array_length(subjectNames, 1)) as ax2
-                                GROUP BY año) as a
-                        ON (t.año=a.año);
-                END;
-                $$ LANGUAGE plpgsql;*/
+                String sql = "CREATE OR REPLACE FUNCTION createNodeView(viewname character varying ,nodename character varying,subjectnames character varying[]) RETURNS void AS $$\n" +
+"                BEGIN \n" +
+"                CREATE TABLE vistaNodos AS \n" +
+"                SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, (t.total-aprobados) as desaprobados\n" +
+"                FROM\n" +
+"                --Sacamos la cuenta de los que cursaron alguna materia\n" +
+"                                (SELECT año,count(*) as total FROM\n" +
+"                                        (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
+"                                        FROM cursadas\n" +
+"                                        WHERE nombre = ANY (subjectnames)\n" +
+"                                        GROUP BY año, legajo) as ax1\n" +
+"                                GROUP BY año) AS t\n" +
+"                        FULL JOIN \n" +
+"                                --Sacamos la cuenta de los que aprobaron todas las materias\n" +
+"                                (SELECT año,count(*) as aprobados FROM\n" +
+"                                        (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
+"                                        FROM cursadas\n" +
+"                                        WHERE nombre = ANY (subjectnames) and resultado='A'\n" +
+"                                        GROUP BY año, legajo\n" +
+"                                        HAVING count(*)=array_length(subjectnames, 1)) as ax2\n" +
+"                                GROUP BY año) as a\n" +
+"                        ON (t.año=a.año);\n" +
+"                END;\n" +
+"                $$ LANGUAGE plpgsql;";
                 
                 try{
                     Statement stmt = con.createStatement();
                     stmt.execute(sql);
+                    System.out.println("Funcion creada");
                 }
                 catch(SQLException sqle){
                     InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
@@ -326,6 +305,7 @@ public class AdminBD {
                         pstmt.setString(2,"Nodo"+nroNodo);
                         pstmt.setArray(3, arrayMaterias);
                         pstmt.execute();
+                        System.out.print("Nodo calculado");
                     } catch (SQLException sqle) {
                         InfoMsgBox.errBox("COD " + sqle.getErrorCode()
                                 + ") " + sqle.getMessage(), "Error de SQL");
@@ -350,7 +330,7 @@ public class AdminBD {
         this.createNodeView(viewName, l);
     }
 
-    //returns a
+    //returns a 
     //Devolvemos sólo un porcentaje por año sin importar qué año es
     public List<Float> getPassPercentage(Nodo n){
         List<Float> porcentajes=new ArrayList<>();

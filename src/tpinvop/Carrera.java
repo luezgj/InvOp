@@ -195,5 +195,11 @@ public class Carrera{
         return out;
     }
     
+    //Devuelve el conjunto(sin repeticiones) de nodos que contiene la carrera
+    public List<Nodo> getNodos(){
+        List<Nodo> outNodos= new LinkedList<>();
+        
+        return outNodos;
+    }
 
 }

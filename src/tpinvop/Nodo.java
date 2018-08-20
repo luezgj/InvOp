@@ -1,18 +1,36 @@
 package tpinvop;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
 
 public class Nodo implements Iterable<Materia> {
     List<Materia> Materias;
+    boolean sorted;
     
     public Nodo(){ 
         Materias= new ArrayList<>();
+        sorted=false;
     }
     
     public void add(Materia m){
         Materias.add(m);
+        sorted=false;
+    }
+    
+    public String getNombre(){
+        StringBuilder nombre=new StringBuilder();
+        
+        Collections.sort(Materias);
+        sorted=true;
+        
+        for (Materia mat : Materias) {
+            nombre.append(mat.getNombre());
+            nombre.append(";");
+        }
+        
+        return nombre.toString();
     }
     
     public Nodo clone(){

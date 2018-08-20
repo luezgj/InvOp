@@ -20,10 +20,8 @@ import org.postgresql.copy.CopyManager;
 public class AdminBD {
     
     Connection con;
-    /*
-    public Connection connectDatabase() {
-        
-        Connection connection = null;
+    
+    public void connectDatabase() {
         
         try {
             
@@ -39,23 +37,22 @@ public class AdminBD {
             }
             
             // Database connect
+            // Create user:
+            // sudo -u postgres psql postgres
+            // create user invop with password '12345';
             // Conectamos con la base de datos
-            connection = DriverManager.getConnection(
+            this.con = DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/invopdb",
                     "invop", "12345");
- 
-            boolean valid = connection.isValid(50000);
             
-            InfoMsgBox.infoBox(valid ? "TEST OK" : "TEST FAIL", "Mensaje");
         } catch (java.sql.SQLException sqle) {
                 InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
                                 ") "+sqle.getMessage(), "Error de SQL");
         }
         
-        return connection;
-    } */
+    }
     
-    
+    /*
     public void connectDatabase() {
         try {
             try { 
@@ -70,7 +67,7 @@ public class AdminBD {
         catch (java.sql.SQLException sqle) {
             System.out.println("Error: " + sqle);
         }
-    }
+    }*/
     
     public void createTable(String dbName){  // Creates a table with the specified name
         

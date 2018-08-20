@@ -2,7 +2,7 @@ package tpinvop;
 
 import java.util.List;
 
-public class Materia {
+public class Materia implements Comparable<Materia> {
     int cod;
     String nombre;
     List<Integer> correlatividades;
@@ -66,5 +66,10 @@ public class Materia {
                return false;
        return true;
    }
+
+    @Override
+    public int compareTo(Materia o) {
+        return nombre.compareTo(o.getNombre());
+    }
 
 }

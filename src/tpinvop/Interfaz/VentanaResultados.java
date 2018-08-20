@@ -26,6 +26,7 @@ public class VentanaResultados extends javax.swing.JFrame {
         super("Cadenas");
         setSize(800,600);
         this.setLocationRelativeTo(null);
+        crearCadenas("./recursos/Correlatividades.txt");
     }
 
     void crearCadenas(String dirCorrelativas){

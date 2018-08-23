@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,22 +16,37 @@ public class Carrera{
     
     String nombre;
     List<Linea> Lineas;
+    List<Materia> Materias;
+    HashMap<Integer,Boolean> materiaUsada;
     
+    //Constructor carrera
     public Carrera(String nombre,String ruta){
         this.nombre=nombre;
         GenerarLineas(ruta);
     }
     
+    //Genera las lineas de la carrera, primero obtiene la lista de materias
+    // y luego genera las lineas correspondientes segun las correlatividades
+    // de cada una. Se realiza desde las materias finales a las iniciales
     private void GenerarLineas(String ruta){
-        List<Materia> Materias=new ArrayList<>();
-        getMaterias(ruta,Materias);
-        Lineas=getRamas(Materias);
+        Materias=new ArrayList<>();
+        getMaterias(ruta);
+        Lineas=getRamas();
              
+    }
+        
+    private void inicializarHash(){
+        if(this.materiaUsada == null)
+            materiaUsada = new HashMap();
+        for (Materia m : Materias)
+            materiaUsada.put(m.getCod(), false);
     }
     
     
+    
+    
     //Metodo para obtener desde un archivo la lista de materias para generar las lineas a analizar
-    private void getMaterias(String ruta,List<Materia> Materias) {
+    private void getMaterias(String ruta) {
         File archivo;
         FileInputStream is;
         BufferedReader br = null;
@@ -42,6 +58,8 @@ public class Carrera{
 		br = new BufferedReader(isr);
                 
         String linea;
+        
+        // Se obtiene los datos de la linea del archivo
 		while((linea=br.readLine())!=null){
                     getInfoMateria(linea,Materias);
                 }
@@ -50,6 +68,7 @@ public class Carrera{
            e.printStackTrace();
         }finally{
            try{
+               //Si el archivo existe y se leyo cierra el buffer 
               if( null != br ){
                  br.close();
               }
@@ -74,6 +93,7 @@ public class Carrera{
         Materias.add(m);
     }
     
+    // Obtiene la lista de correlatividades...
     private List<Integer> getListCorrelatividades(String correlatividades){
         List<Integer> salida=new ArrayList<>();
         String lineaMod = ","+correlatividades;
@@ -95,13 +115,14 @@ public class Carrera{
        }
     }
     
+    //Comprueba si la materia pasada por parametro esta incluida en alguna linea
     private boolean Pertenece(Materia m){
         if (Lineas.size() > 0)
-        for (Linea l : Lineas) {
-            if (l.contieneMateria(m)){
-                return true;
+            for (Linea l : Lineas) {
+                if (l.contieneMateria(m)){
+                    return true;
+                }
             }
-        }
         return false;
     }
 
@@ -139,45 +160,62 @@ public class Carrera{
         return salida;
     }
     
-    private void CompletarLinea(Linea l,Materia m,int idLinea,List<Materia> Materias){
-        if (m.tieneCorrelativas()){
-            List<Integer> codMat=m.getCorrelatividades();
-            
-            Nodo nodo= new Nodo();
-            for(Integer i:codMat){
-                nodo.add(getMateriaXcod(i,Materias));
+    private void CompletarLinea(Linea l,Materia m,int idLinea,Nodo nodo){
+        
+        List<Integer> codMat=m.getCorrelatividades();
+        
+        //Inserta en el nodo las correlatividades correspondientes
+        
+        for(Integer codCorrelativa:codMat){
+            if (!materiaUsada.get(codCorrelativa)){
+                nodo.add(getMateriaXcod(codCorrelativa,Materias));
+                materiaUsada.put(codCorrelativa, true);
             }
-            l.addNodo(nodo);
-            
-            List<Materia> Msig=getMatSig(nodo);        
-            if(Msig.isEmpty()){
-                Linea newLinea=l.clone();
-                newLinea.setId(idLinea);
-                newLinea.invertir();
-                Lineas.add(newLinea);
-            }
-            else
-                for(Materia mat:Msig){
-                    CompletarLinea(l,mat,idLinea,Materias); 
-                }
-            l.eliminarUltimoNodo();
         }
-    }    
+        if (nodo.getCantMaterias() > 0)
+            l.addNodo(nodo);
+
+        nodo.ordenar();
+        Nodo nuevoNodo = new Nodo();
+        for( Materia mat : nodo){
+            CompletarLinea(l,mat,idLinea,nuevoNodo); 
+        }
+        /*
+        //Obtiene la lista de correlativas
+        List<Materia> Msig = getMatSig(nodo);        
+        if(Msig.isEmpty()){
+            Linea newLinea=l.clone();
+            newLinea.setId(idLinea);
+            newLinea.invertir();
+            Lineas.add(newLinea);
+        }
+        else
+            for(Materia mat:Msig){
+                CompletarLinea(l,mat,idLinea,Materias); 
+            }
+        */
+        //l.eliminarUltimoNodo();
+    }
+        
     
-    //Crea todas las lineas
-    private List<Linea> getRamas(List<Materia> Materias){
+    //Crea todas las lineas *****OK*******
+    private List<Linea> getRamas(){
         Lineas= new ArrayList<>();
         int idLinea=1;
         Linea l;
+        Nodo nodo;
         for(Materia m:Materias){
              if (!Pertenece(m)){
+                inicializarHash();
                 l=new Linea(idLinea);
                 l.addMateria(m);
                 if (!m.tieneCorrelativas()){
                     Lineas.add(l);
                 }
                 else{
-                    CompletarLinea(l,m,idLinea,Materias);
+                    nodo = new Nodo();
+                    CompletarLinea(l,m,idLinea,nodo);
+                    Lineas.add(l);
                 }
                 idLinea++;
                 

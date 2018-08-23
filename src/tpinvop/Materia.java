@@ -15,6 +15,15 @@ public class Materia implements Comparable<Materia> {
     public int getCod() {
         return cod;
     }
+    
+    // Generalizar 
+    public int getAnio() {
+        return ( (Integer) cod ).toString().charAt(1);
+    }
+    
+    public int getCuatrimestre() {
+        return ( (Integer) cod ).toString().charAt(2);        
+    }
 
     public String getNombre() {
         return nombre;
@@ -42,7 +51,7 @@ public class Materia implements Comparable<Materia> {
         return true;
     }
 
-    public String MOstrarCorrelatividades() {
+    public String mostrarCorrelatividades() {
         String salida="";
         for(Integer i: correlatividades){
             salida+=Integer.toString(i);
@@ -69,7 +78,18 @@ public class Materia implements Comparable<Materia> {
 
     @Override
     public int compareTo(Materia o) {
-        return nombre.compareTo(o.getNombre());
+        
+        if(this.getAnio() < o.getAnio())
+            return 1;
+        else if(this.getAnio() > o.getAnio())
+            return -1;
+        else
+            if(this.getCuatrimestre() < o.getCuatrimestre())
+                return 1;
+            else if(this.getCuatrimestre() > o.getCuatrimestre())
+                return -1;
+            else
+                return 0;
     }
 
 }

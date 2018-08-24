@@ -98,13 +98,11 @@ public class Nodo implements Iterable<Materia> {
             posicionarray++;
             return Materias.get(posicionarray-1);
         }
-
-        @Override
-        public void remove(){
-            
-            throw new UnsupportedOperationException("No soportado.");
-
-        }
         
     }
+    
+    public void ordenar(){
+        Collections.sort(Materias);
+    }
+            
 }

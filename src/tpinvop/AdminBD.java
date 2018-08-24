@@ -5,9 +5,7 @@ import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import org.postgresql.core.BaseConnection;
 import org.postgresql.copy.CopyManager;
@@ -20,8 +18,20 @@ import org.postgresql.copy.CopyManager;
 public class AdminBD {
     
     Connection con;
+    String tableName;
+    String viewName;
+
+    public AdminBD(String tableName, String viewName) {
+        this.tableName = tableName;
+        this.viewName = viewName;
+    }
     
-    public void connectDatabase() {
+    
+    
+    /*
+    public Connection connectDatabase() {
+        
+        Connection connection = null;
         
         try {
             
@@ -69,11 +79,11 @@ public class AdminBD {
         }
     }*/
     
-    public void createTable(String dbName){  // Creates a table with the specified name
+    public void createTable(){  // Creates a table with the specified name
         
         // Sql statement for creating the base table
         
-        String sql = "CREATE TABLE cursadas " +
+        String sql = "CREATE TABLE IF NOT EXISTS "+ tableName  +
                 "(carrera varchar,"
                 + "plan varchar(4),"
                 + "legajo int,"
@@ -134,14 +144,11 @@ public class AdminBD {
         
         try{
             if(!con.isClosed()){
-
-              
-                String sql = "copy cursadas FROM stdin DELIMITER ',' CSV header";
+                
+                String sql = "copy "+ tableName +" FROM stdin DELIMITER ',' CSV header";
 
                 BaseConnection pgcon = (BaseConnection)con;
                 CopyManager mgr = new CopyManager(pgcon);
-                
-                
                 
                 try{
                     Reader in = new BufferedReader(new FileReader(new File(dirA)));
@@ -173,8 +180,7 @@ public class AdminBD {
         try{
             
             if(!con.isClosed()){
-            
-                String sql = "DELETE FROM cursadas \n" +
+                String sql = "DELETE FROM "+ tableName +
                         "WHERE carrera!='" + carrera +"' or plan!='" + plan + 
                         "' or origen='Cursada Equivalente' or origen='Equivalencia'; ";
 
@@ -199,13 +205,12 @@ public class AdminBD {
     }
     
     //Creates a SQL view from the table with pass and fail count from each year and subject
-    private void createGeneralView(String tableName, String viewName){
+    private void createGeneralView(){
         try{
 
             if(!con.isClosed()){
                 
-                
-                String sql= "CREATE VIEW "+ viewName +" AS SELECT coalesce(ap.año, des.año) as año, \n" +
+                String sql= "CREATE TABLE "+ viewName +" AS SELECT coalesce(ap.año, des.año) as año, \n" +
 "                    coalesce(ap.nombre, des.nombre) as nombre, \n" +
 "                    coalesce(aprobados,0) as aprobados, \n" +
 "                    coalesce(desaprobados,0) as desaprobados \n" +
@@ -241,21 +246,21 @@ public class AdminBD {
     }
     
     //Updates the view created with data asociated to multiple subject node in lines
-    private void createNodeView(String viewName, List<Nodo> l){
+    private void createNodeView(List<Nodo> l){
         try{
 
             if(!con.isClosed()){
 
                 //Create procedure to update view
-                String sql = "CREATE OR REPLACE FUNCTION createNodeView(viewname character varying ,nodename character varying,subjectnames character varying[]) RETURNS void AS $$\n" +
+                String sql = "CREATE OR REPLACE FUNCTION createNodeView(nodename character varying,subjectnames character varying[]) RETURNS void AS $$\n" +
 "                BEGIN \n" +
-"                CREATE TABLE vistaNodos AS \n" +
-"                SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, (t.total-aprobados) as desaprobados\n" +
+"                INSERT INTO "+ viewName +
+"                SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, coalesce(t.total-aprobados, t.total) as desaprobados\n" +
 "                FROM\n" +
 "                --Sacamos la cuenta de los que cursaron alguna materia\n" +
 "                                (SELECT año,count(*) as total FROM\n" +
 "                                        (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
-"                                        FROM cursadas\n" +
+"                                        FROM "+ tableName +
 "                                        WHERE nombre = ANY (subjectnames)\n" +
 "                                        GROUP BY año, legajo) as ax1\n" +
 "                                GROUP BY año) AS t\n" +
@@ -263,7 +268,7 @@ public class AdminBD {
 "                                --Sacamos la cuenta de los que aprobaron todas las materias\n" +
 "                                (SELECT año,count(*) as aprobados FROM\n" +
 "                                        (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
-"                                        FROM cursadas\n" +
+"                                        FROM "+ tableName +
 "                                        WHERE nombre = ANY (subjectnames) and resultado='A'\n" +
 "                                        GROUP BY año, legajo\n" +
 "                                        HAVING count(*)=array_length(subjectnames, 1)) as ax2\n" +
@@ -284,10 +289,8 @@ public class AdminBD {
                 
                 
                 //Execute procedure for each node
-                int nroNodo=0;
                 for(Nodo n: l){
                     try {
-                        
                         String[] materias= new String[n.getCantMaterias()];
                         int i=0;
                         for(Materia m:n){
@@ -296,18 +299,16 @@ public class AdminBD {
                         }
                         java.sql.Array arrayMaterias= con.createArrayOf("varchar", materias);
                         
-                        sql="SELECT * FROM createNodeView (?, ?, ?)";
+                        sql="SELECT * FROM createNodeView (?, ?)";
                         PreparedStatement pstmt = con.prepareStatement(sql);
-                        pstmt.setString(1,viewName);
-                        pstmt.setString(2,"Nodo"+nroNodo);
-                        pstmt.setArray(3, arrayMaterias);
+                        pstmt.setString(1,n.getNombre());
+                        pstmt.setArray(2, arrayMaterias);
                         pstmt.execute();
                         System.out.print("Nodo calculado");
                     } catch (SQLException sqle) {
                         InfoMsgBox.errBox("COD " + sqle.getErrorCode()
                                 + ") " + sqle.getMessage(), "Error de SQL");
                     }
-                    nroNodo++;
                 }
             }
             else
@@ -321,19 +322,28 @@ public class AdminBD {
     }
     
     //public method for constructing the data view
-    public void createView(String viewName, String tableName, List<Nodo> l){
-        
-        this.createGeneralView(tableName, viewName);
-        this.createNodeView(viewName, l);
+    public void createView(List<Nodo> l){
+        this.createGeneralView();
+        this.createNodeView(l);
     }
 
-    //returns a 
-    //Devolvemos sólo un porcentaje por año sin importar qué año es
-    public List<Float> getPassPercentage(Nodo n){
-        List<Float> porcentajes=new ArrayList<>();
+    //Devolvemos sólo un porcentaje por año
+    public float getPassPercentage(Nodo n){
+        String sql="SELECT avg(aprobados) FROM "+ viewName +
+        "WHERE nombre=" + n.getNombre();
+        float passPercentage=0f;
+        try {
+            Statement stmt;
+            stmt = con.createStatement();
+            ResultSet rs= stmt.executeQuery(sql);
+            rs.next();
+            passPercentage=rs.getFloat(1);
+        } catch (SQLException sqle) {
+            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
+                        ") "+sqle.getMessage(), "Error de SQL");
+        }
         
-        
-        return porcentajes;
+        return passPercentage;
     }
     
     public boolean dbOK(){

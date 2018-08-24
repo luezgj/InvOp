@@ -10,7 +10,7 @@ public class main {
        AdminBD javaPostgreSQLBasic = new AdminBD();
        
        javaPostgreSQLBasic.connectDatabase();
-       //javaPostgreSQLBasic.createTable("noImportaXqNoSeUsa");
+       //javaPostgreSQLBasic.createTable();
        //javaPostgreSQLBasic.loadCSV("./recursos/cursadas.csv");
        //javaPostgreSQLBasic.filterData(206, "2011");
        
@@ -23,6 +23,6 @@ public class main {
        List<Nodo> listaTest= new LinkedList<>();
        listaTest.add(nodoTest);
        
-       javaPostgreSQLBasic.createView("vistaNetB", "cursadas", listaTest);
+       javaPostgreSQLBasic.createView(listaTest);
     }
 }

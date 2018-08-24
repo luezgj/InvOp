@@ -29,17 +29,11 @@ public class Materia implements Comparable<Materia> {
     }
     
     public boolean EsCorrelativa(Integer cod){
-        if (correlatividades.contains(cod)){
-            return true;
-        }
-        else
-            return false;
+        return (correlatividades.contains(cod));
     }
     
     public boolean tieneCorrelativas(){
-        if (correlatividades.size()==0)
-            return false;
-        return true;
+        return !(correlatividades.isEmpty());
     }
 
     public String MOstrarCorrelatividades() {
@@ -55,9 +49,7 @@ public class Materia implements Comparable<Materia> {
     }
     
     public boolean equals(Materia m){
-        if (cod == m.getCod() )
-                return true;
-        return false;
+        return cod == m.getCod();
     }
     
    public boolean mismasCorrelativas(Materia m){

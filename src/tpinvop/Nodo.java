@@ -20,19 +20,24 @@ public class Nodo implements Iterable<Materia> {
     }
     
     public String getNombre(){
-        StringBuilder nombre=new StringBuilder();
-        
-        Collections.sort(Materias);
-        sorted=true;
-        
-        for (Materia mat : Materias) {
-            nombre.append(mat.getNombre());
-            nombre.append(";");
+        if (Materias.size()==1){
+            return Materias.get(0).getNombre();
+        }else{
+            StringBuilder nombre=new StringBuilder();
+
+            Collections.sort(Materias);
+            sorted=true;
+
+            for (Materia mat : Materias) {
+                nombre.append(mat.getNombre());
+                nombre.append(";");
+            }
+
+            return nombre.toString();
         }
-        
-        return nombre.toString();
     }
     
+    @Override
     public Nodo clone(){
         Nodo salida=new Nodo();
         Materia materiaNew;
@@ -51,6 +56,7 @@ public class Nodo implements Iterable<Materia> {
         return false;
     }
     
+    @Override
     public String toString(){
         String contenido="";
         for(Materia m:Materias){
@@ -61,6 +67,7 @@ public class Nodo implements Iterable<Materia> {
         return contenido;
     }
     
+    @Override
     public Iterator<Materia> iterator() {    
         Iterator it = new IteratorMateria();
         return it;         

@@ -3,9 +3,9 @@ package tpinvop;
 import java.util.List;
 
 public class Materia implements Comparable<Materia> {
-    int cod;
-    String nombre;
-    List<Integer> correlatividades;
+    private int cod;
+    private String nombre;
+    private List<Integer> correlatividades;
     public Materia(int cod,String nombre,List<Integer> cs){
         this.cod=cod;
         this.nombre=nombre;

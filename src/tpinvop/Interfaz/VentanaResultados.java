@@ -19,7 +19,7 @@ public class VentanaResultados extends javax.swing.JFrame {
     final static private int DISTANCIAX_ENTRE_BLOQUES = 230;
     final static private int DISTANCIAY_ENTRE_BLOQUES = 80;
     final static private int ANCHO_BLOQUE = 200;
-    final static private int ALTO_BLOQUE = 50;   
+    final static private int ALTO_BLOQUE = 85;   
     Object parent;
     
     public VentanaResultados() {

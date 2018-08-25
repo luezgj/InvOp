@@ -77,6 +77,15 @@ public class Nodo implements Iterable<Materia> {
             return Materias.size();
     }
     
+    public void eliminarMateria(Materia m){
+        int pos=0;
+        while ( pos < Materias.size() ){
+            if (Materias.get(pos).getCod() == m.getCod())
+                Materias.remove(pos);
+            pos++;
+        }
+    }
+    
     protected class IteratorMateria implements Iterator<Materia>
     {
         protected int posicionarray;

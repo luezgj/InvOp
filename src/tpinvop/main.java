@@ -7,7 +7,7 @@ public class main {
     
     public static void main(String[] args) {
        Carrera IngSist=new Carrera("Ingeniero en Sistemas","recursos/Correlatividades.txt");
-       AdminBD javaPostgreSQLBasic = new AdminBD();
+       /*AdminBD javaPostgreSQLBasic = new AdminBD();
        
        javaPostgreSQLBasic.connectDatabase();
        //javaPostgreSQLBasic.createTable();
@@ -23,6 +23,6 @@ public class main {
        List<Nodo> listaTest= new LinkedList<>();
        listaTest.add(nodoTest);
        
-       javaPostgreSQLBasic.createView(listaTest);
+       javaPostgreSQLBasic.createView(listaTest);*/
     }
 }

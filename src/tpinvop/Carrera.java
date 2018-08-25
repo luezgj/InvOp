@@ -162,39 +162,31 @@ public class Carrera{
     
     private void CompletarLinea(Linea l,Materia m,int idLinea,Nodo nodo){
         
-        List<Integer> codMat=m.getCorrelatividades();
-        
-        //Inserta en el nodo las correlatividades correspondientes
-        
-        for(Integer codCorrelativa:codMat){
-            if (!materiaUsada.get(codCorrelativa)){
-                nodo.add(getMateriaXcod(codCorrelativa,Materias));
-                materiaUsada.put(codCorrelativa, true);
+        Nodo nodoInicial = new Nodo();
+        nodoInicial.add(m);
+        Nodo nuevoNodo;
+        Nodo nodoSig = nodoInicial;
+        List<Integer> codMat;
+        while (nodoSig.getCantMaterias() > 0) {
+            nuevoNodo = new Nodo();
+            for (Materia mat : nodoSig){
+                codMat=mat.getCorrelatividades();
+                //Inserta en el nodo las correlatividades correspondientes
+                for(Integer codCorrelativa:codMat){
+                    if (materiaUsada.get(codCorrelativa)){
+                        nuevoNodo.eliminarMateria(getMateriaXcod(codCorrelativa,Materias));
+                        l.eliminarMateria(getMateriaXcod(codCorrelativa,Materias));
+                    }
+                    nuevoNodo.add(getMateriaXcod(codCorrelativa,Materias));
+                    materiaUsada.put(codCorrelativa, true);
+                    
+                }
             }
+            if (nuevoNodo.getCantMaterias() > 0)
+                l.addNodo(nuevoNodo);
+            nuevoNodo.ordenar();
+            nodoSig = nuevoNodo;
         }
-        if (nodo.getCantMaterias() > 0)
-            l.addNodo(nodo);
-
-        nodo.ordenar();
-        Nodo nuevoNodo = new Nodo();
-        for( Materia mat : nodo){
-            CompletarLinea(l,mat,idLinea,nuevoNodo); 
-        }
-        /*
-        //Obtiene la lista de correlativas
-        List<Materia> Msig = getMatSig(nodo);        
-        if(Msig.isEmpty()){
-            Linea newLinea=l.clone();
-            newLinea.setId(idLinea);
-            newLinea.invertir();
-            Lineas.add(newLinea);
-        }
-        else
-            for(Materia mat:Msig){
-                CompletarLinea(l,mat,idLinea,Materias); 
-            }
-        */
-        //l.eliminarUltimoNodo();
     }
         
     

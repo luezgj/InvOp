@@ -33,17 +33,6 @@ public class Linea implements Iterable<Nodo>{
         return Materias.size();
     }
     
-    public Linea clone(){
-        Linea salida=new Linea(this.id);
-        List<Nodo> ms=new ArrayList<>();
-        for(Nodo n : Materias){
-            Nodo nodoNew=n.clone();
-            ms.add(nodoNew);
-        }
-        salida.setMaterias(ms);
-        return salida;
-    }
-    
     public boolean contieneMateria(Materia m){
         for(Nodo n : Materias)
             if (n.contieneMateria(m))
@@ -65,8 +54,10 @@ public class Linea implements Iterable<Nodo>{
         this.id = id;
     }
     
-    public void eliminarUltimoNodo(){
-        Materias.remove(Materias.size()-1);
+    public void eliminarMateria(Materia m){
+        for (Nodo nodo : Materias){
+            nodo.eliminarMateria(m);
+        }
     }
 
     public void invertir(){

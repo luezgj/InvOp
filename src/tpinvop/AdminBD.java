@@ -62,7 +62,7 @@ public class AdminBD {
         
     }
     
-    /*
+    */
     public void connectDatabase() {
         try {
             try { 
@@ -77,7 +77,7 @@ public class AdminBD {
         catch (java.sql.SQLException sqle) {
             System.out.println("Error: " + sqle);
         }
-    }*/
+    }
     
     public void createTable(){  // Creates a table with the specified name
         

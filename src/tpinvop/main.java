@@ -2,27 +2,25 @@ package tpinvop;
 
 import java.util.LinkedList;
 import java.util.List;
+import tpinvop.Interfaz.VentanaResultados;
 
 public class main {
     
     public static void main(String[] args) {
        Carrera IngSist=new Carrera("Ingeniero en Sistemas","recursos/Correlatividades.txt");
-       /*AdminBD javaPostgreSQLBasic = new AdminBD();
+       AdminBD db = new AdminBD("cursadas","vista");
        
-       javaPostgreSQLBasic.connectDatabase();
-       //javaPostgreSQLBasic.createTable();
-       //javaPostgreSQLBasic.loadCSV("./recursos/cursadas.csv");
-       //javaPostgreSQLBasic.filterData(206, "2011");
+       db.connectDatabase();
+       db.createTable();
+       db.loadCSV("./recursos/cursadas.csv");
+       db.filterData(206, "2011");
+       db.createView(IngSist.getNodos());
        
+       GeneradorCadena genCadenas = new GeneradorCadena(null);
        
-       Nodo nodoTest= new Nodo();
-       nodoTest.add(new Materia(0, "Ciencias de la Computación I", null));
-       nodoTest.add(new Materia(1, "Introducción a la Programación II", null));
-       nodoTest.add(new Materia(2, "Matemática Discreta", null));
+       List<Cadena> cadenas= genCadenas.getCadenas(IngSist);
        
-       List<Nodo> listaTest= new LinkedList<>();
-       listaTest.add(nodoTest);
+       new VentanaResultados(cadenas).setVisible(true);
        
-       javaPostgreSQLBasic.createView(listaTest);*/
     }
 }

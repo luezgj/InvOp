@@ -28,6 +28,7 @@ public class Linea implements Iterable<Nodo>{
     public void setMaterias(List<Nodo> ms){
         Materias=ms;
     }
+
     
     public int getCantMaterias(){
         return Materias.size();

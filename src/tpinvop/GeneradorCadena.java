@@ -8,15 +8,16 @@ public class GeneradorCadena {
 
     private AdminBD dbAdmin;
     
-    public void GeneradorCadena(AdminBD admin){
+    public GeneradorCadena(AdminBD admin){
         dbAdmin=admin;
     }
+
     
     private Cadena getCadena(Linea linea){
         Cadena c=new Cadena(linea);
         int nroNodo=0;
         for(Nodo n: linea){
-            c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n));
+            //c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n));
             nroNodo++;
         }
         return c;

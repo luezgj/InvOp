@@ -5,31 +5,34 @@ import com.mxgraph.view.mxGraph;
 import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
-import tpinvop.Carrera;
-import tpinvop.Linea;
 import tpinvop.Materia;
 import tpinvop.Nodo;
+import tpinvop.Cadena;
 
 public class VentanaResultados extends javax.swing.JFrame {
 
     private mxGraph graph;
     private mxGraphComponent graphComponent;
-    final static private int DISTANCIAX_ENTRE_BLOQUES = 230;
-    final static private int DISTANCIAY_ENTRE_BLOQUES = 80;
+    final static private int DISTANCIAX_ENTRE_BLOQUES = 250;
+    final static private int DISTANCIAY_ENTRE_BLOQUES = 150;
     final static private int ANCHO_BLOQUE = 200;
-    final static private int ALTO_BLOQUE = 85;   
+    final static private int ALTO_BLOQUE = 100;   
+    
+    final static private int DISTANCIAY_ENTRE_BLOQUES_CHICOS = 20;
+    
+    final static private int ANCHO_BLOQUE_CHICO = 50;
+    final static private int ALTO_BLOQUE_CHICO = 20;   
+    
     Object parent;
     
-    public VentanaResultados() {
+    public VentanaResultados(List<Cadena> cadenas) {
         super("Cadenas");
         setSize(800,600);
         this.setLocationRelativeTo(null);
-        crearCadenas("./recursos/Correlatividades.txt");
+        crearCadenas(cadenas);
     }
 
-    void crearCadenas(String dirCorrelativas){
+    void crearCadenas(List<Cadena> cadenas){
         graph = new mxGraph();
         graphComponent = new mxGraphComponent(graph);
         graphComponent.setPreferredSize(new Dimension(400,400));
@@ -39,30 +42,30 @@ public class VentanaResultados extends javax.swing.JFrame {
         graph.getModel().beginUpdate();
         
         parent = graph.getDefaultParent();
-        Carrera IngSist=new Carrera("Ingeniero en Sistemas",dirCorrelativas);
-        List<Linea> Lineas = IngSist.getLineas(); 
         int distanciaYEntreBloques = 5;
               
-        for (Linea l : Lineas){
-            crearVertices(l,distanciaYEntreBloques);
+        for (Cadena c : cadenas){
+            crearVertices(c,distanciaYEntreBloques);
             distanciaYEntreBloques+=DISTANCIAY_ENTRE_BLOQUES;
        }  
         
         graph.getModel().endUpdate();
     }
     
-    void crearVertices(Linea l,int posY){
+    void crearVertices(Cadena c,int posY){
         boolean primerNodo = true;
         Object v1= null;
         Object v2= null;
-        Iterator<Nodo> itLinea = l.iterator();
+        Iterator<Nodo> itLinea = c.getLinea().iterator();
         int posX=5;
         
         while ( itLinea.hasNext()){
             Nodo nodo=itLinea.next();
             Iterator<Materia> itMaterias = nodo.iterator();
-            String grupoMaterias = "";
-            boolean primerMateria = true;
+           
+            //String grupoMaterias = "";
+            
+            /*boolean primerMateria = true;
             while ( itMaterias.hasNext() ){
                 if (primerMateria){
                     grupoMaterias+=itMaterias.next().getNombre();
@@ -70,9 +73,18 @@ public class VentanaResultados extends javax.swing.JFrame {
                 }
                 else
                     grupoMaterias+="\n"+itMaterias.next().getNombre();
-            }
+            }*/
+            
             //graph.insertVertex(parent,null,"TESTES",COORDENADA X,COORDENADA Y, ANCHO, ALTO);
-            v2 = graph.insertVertex(parent,null,grupoMaterias,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
+            
+            v2 = graph.insertVertex(parent,null,""/*nodo.getNombre()*/,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
+            double posXchico=0d;
+            double posYchico=0d;
+            for (Materia m: nodo){
+                graph.insertVertex(v2,null,m.getNombre(),posXchico,posYchico,ANCHO_BLOQUE,ALTO_BLOQUE_CHICO);
+                posYchico+=DISTANCIAY_ENTRE_BLOQUES_CHICOS;
+            }
+            
             if (!primerNodo)
                 //graph.insertEdge(parent, null, ACA VA LA PROBABILIDAD, v1, v2);
                 graph.insertEdge(parent, null, "", v1, v2);
@@ -120,20 +132,22 @@ public class VentanaResultados extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    
+    //public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {/*
+        //try {
+            /*
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }*/
-            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            /*javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
@@ -142,16 +156,16 @@ public class VentanaResultados extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+        }*/
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new VentanaResultados().setVisible(true);
             }
         });
-    }
+    }*/
     
     public void setTextPan(String contenido){
         jTextPane1.setText( contenido );

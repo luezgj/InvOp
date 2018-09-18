@@ -25,6 +25,10 @@ public class Cadena {
         }
         return false;
     }
+
+    public Linea getLinea() {
+        return l;
+    }
     
     public float getProbAprobar(int nroNodo){
         if(nroNodo<l.getCantMaterias()){

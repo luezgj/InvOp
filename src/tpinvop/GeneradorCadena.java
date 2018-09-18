@@ -11,13 +11,12 @@ public class GeneradorCadena {
     public GeneradorCadena(AdminBD admin){
         dbAdmin=admin;
     }
-
     
-    private Cadena getCadena(Linea linea){
+    private Cadena getCadena(Linea linea, Integer año){
         Cadena c=new Cadena(linea);
         int nroNodo=0;
         for(Nodo n: linea){
-            //c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n));
+            c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n,año));
             nroNodo++;
         }
         return c;
@@ -27,7 +26,17 @@ public class GeneradorCadena {
         List<Linea> lineas=carrera.getLineas();
         List<Cadena> cadenas=new LinkedList<>();
         for(Linea l:lineas){
-            Cadena c=getCadena(l);
+            Cadena c=getCadena(l, null);
+            cadenas.add(c);
+        }
+        return cadenas;
+    }
+    
+    public List<Cadena> getCadenas(Carrera carrera, int año){
+        List<Linea> lineas=carrera.getLineas();
+        List<Cadena> cadenas=new LinkedList<>();
+        for(Linea l:lineas){
+            Cadena c=getCadena(l, año);
             cadenas.add(c);
         }
         return cadenas;

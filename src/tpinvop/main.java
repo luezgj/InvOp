@@ -14,9 +14,9 @@ public class main {
        db.createTable();
        db.loadCSV("./recursos/cursadas.csv");
        db.filterData(206, "2011");
-       db.createView(IngSist.getNodos());
+
        */
-       GeneradorCadena genCadenas = new GeneradorCadena(null);
+      GeneradorCadena genCadenas = new GeneradorCadena(null);
        
        List<Cadena> cadenas= genCadenas.getCadenas(IngSist);
        

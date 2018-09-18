@@ -5,6 +5,7 @@ import com.mxgraph.view.mxGraph;
 import java.awt.Dimension;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JFrame;
 import tpinvop.Materia;
 import tpinvop.Nodo;
 import tpinvop.Cadena;
@@ -15,7 +16,7 @@ public class VentanaResultados extends javax.swing.JFrame {
     private mxGraphComponent graphComponent;
     final static private int DISTANCIAX_ENTRE_BLOQUES = 250;
     final static private int DISTANCIAY_ENTRE_BLOQUES = 150;
-    final static private int ANCHO_BLOQUE = 200;
+    final static private int ANCHO_BLOQUE = 220;
     final static private int ALTO_BLOQUE = 100;   
     
     final static private int DISTANCIAY_ENTRE_BLOQUES_CHICOS = 20;
@@ -30,70 +31,61 @@ public class VentanaResultados extends javax.swing.JFrame {
         setSize(800,600);
         this.setLocationRelativeTo(null);
         crearCadenas(cadenas);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     void crearCadenas(List<Cadena> cadenas){
         graph = new mxGraph();
-        graphComponent = new mxGraphComponent(graph);
-        graphComponent.setPreferredSize(new Dimension(400,400));
-        graphComponent.setEnabled(false);
-        getContentPane().add(graphComponent);
        
         graph.getModel().beginUpdate();
         
         parent = graph.getDefaultParent();
-        int distanciaYEntreBloques = 5;
-              
-        for (Cadena c : cadenas){
-            crearVertices(c,distanciaYEntreBloques);
-            distanciaYEntreBloques+=DISTANCIAY_ENTRE_BLOQUES;
-       }  
+        try{
+            int distanciaYEntreBloques = 5;
+
+            for (Cadena c : cadenas){
+                crearVertices(c,distanciaYEntreBloques);
+                distanciaYEntreBloques+=DISTANCIAY_ENTRE_BLOQUES;
+            }  
+        } finally {
+		graph.getModel().endUpdate();
+	}
         
-        graph.getModel().endUpdate();
+        graphComponent = new mxGraphComponent(graph);
+        getContentPane().add(graphComponent);
+        
     }
     
     void crearVertices(Cadena c,int posY){
         boolean primerNodo = true;
-        Object v1= null;
-        Object v2= null;
+        Object v1 = null;
+        Object v2 = null;
+
         Iterator<Nodo> itLinea = c.getLinea().iterator();
         int posX=5;
         
         while ( itLinea.hasNext()){
             Nodo nodo=itLinea.next();
             Iterator<Materia> itMaterias = nodo.iterator();
-           
-            //String grupoMaterias = "";
-            
-            /*boolean primerMateria = true;
-            while ( itMaterias.hasNext() ){
-                if (primerMateria){
-                    grupoMaterias+=itMaterias.next().getNombre();
-                    primerMateria=false;
-                }
-                else
-                    grupoMaterias+="\n"+itMaterias.next().getNombre();
-            }*/
-            
-            //graph.insertVertex(parent,null,"TESTES",COORDENADA X,COORDENADA Y, ANCHO, ALTO);
             
             v2 = graph.insertVertex(parent,null,""/*nodo.getNombre()*/,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
-            double posXchico=0d;
-            double posYchico=0d;
+            double posXchico=10d;
+            double posYchico=10d;
             for (Materia m: nodo){
                 graph.insertVertex(v2,null,m.getNombre(),posXchico,posYchico,ANCHO_BLOQUE,ALTO_BLOQUE_CHICO);
                 posYchico+=DISTANCIAY_ENTRE_BLOQUES_CHICOS;
             }
+            graph.foldCells(true, true, new Object[]{v2});
             
             if (!primerNodo)
-                //graph.insertEdge(parent, null, ACA VA LA PROBABILIDAD, v1, v2);
+                //              (parent, null, ACA VA LA PROBABILIDAD, v1, v2);
                 graph.insertEdge(parent, null, "", v1, v2);
             else
                 primerNodo=false;
             v1 = v2;
             posX+=DISTANCIAX_ENTRE_BLOQUES;
+
         }
-        
 
     }
     

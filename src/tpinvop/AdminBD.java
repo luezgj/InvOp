@@ -6,7 +6,9 @@ import java.io.Reader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.postgresql.core.BaseConnection;
 import org.postgresql.copy.CopyManager;
 
@@ -18,12 +20,14 @@ import org.postgresql.copy.CopyManager;
 public class AdminBD {
     
     Connection con;
-    String tableName;
-    String viewName;
-
+    String generalTable;
+    String generalPassTable;
+    Map<Integer,String> cohortPassTables= new HashMap<>();
+    Map<Integer,String> cohortTables= new HashMap<>();
+            
     public AdminBD(String tableName, String viewName) {
-        this.tableName = tableName;
-        this.viewName = viewName;
+        this.generalTable = tableName;
+        this.generalPassTable = viewName;
     }
     
     
@@ -83,7 +87,7 @@ public class AdminBD {
         
         // Sql statement for creating the base table
         
-        String sql = "CREATE TABLE IF NOT EXISTS "+ tableName  +
+        String sql = "CREATE TABLE IF NOT EXISTS "+ generalTable  +
                 "(carrera varchar,"
                 + "plan varchar(4),"
                 + "legajo int,"
@@ -145,7 +149,7 @@ public class AdminBD {
         try{
             if(!con.isClosed()){
                 
-                String sql = "copy "+ tableName +" FROM stdin DELIMITER ',' CSV header";
+                String sql = "copy "+ generalTable +" FROM stdin DELIMITER ',' CSV header";
 
                 BaseConnection pgcon = (BaseConnection)con;
                 CopyManager mgr = new CopyManager(pgcon);
@@ -180,7 +184,7 @@ public class AdminBD {
         try{
             
             if(!con.isClosed()){
-                String sql = "DELETE FROM "+ tableName +
+                String sql = "DELETE FROM "+ generalTable +
                         "WHERE carrera!='" + carrera +"' or plan!='" + plan + 
                         "' or origen='Cursada Equivalente' or origen='Equivalencia'; ";
 
@@ -204,24 +208,38 @@ public class AdminBD {
         }
     }
     
-    //Creates a SQL view from the table with pass and fail count from each year and subject
-    private void createGeneralView(){
+    private String filterCohort(Integer añocohorte){
+        String nombreTabla=null;
+        if (añocohorte!=null){
+            nombreTabla="Cohorte"+añocohorte;
+            HACER ESTO
+            
+            
+            cohortTables.put(añocohorte, nombreTabla);
+        }
+        return nombreTabla;
+    }
+    
+    //Creates a SQL table from the table with pass and fail count from each year and subject
+    private void generatePassPerSubject(String tableUsed, String passTableDestination){
         try{
 
             if(!con.isClosed()){
                 
-                String sql= "CREATE TABLE "+ viewName +" AS SELECT coalesce(ap.año, des.año) as año, \n" +
+                
+                
+                String sql= "CREATE TABLE "+ passTableDestination +" AS SELECT coalesce(ap.año, des.año) as año, \n" +
 "                    coalesce(ap.nombre, des.nombre) as nombre, \n" +
 "                    coalesce(aprobados,0) as aprobados, \n" +
 "                    coalesce(desaprobados,0) as desaprobados \n" +
 "                    FROM\n" +
 "                    (SELECT nombre, extract(year from fecha_regularidad) as año , count(*) as aprobados \n" +
-"	                    FROM "+ tableName +" \n" +
+"	                    FROM "+ tableUsed +" \n" +
 "	                    WHERE resultado='A' or resultado='P' \n" +
 "	                    GROUP BY nombre, año) AS ap \n" +
 "                    FULL JOIN \n" +
 "                    (SELECT nombre, extract(year from fecha_regularidad) as año , count(*) as desaprobados \n" +
-"	                    FROM "+ tableName +" \n" +
+"	                    FROM "+ tableUsed +" \n" +
 "	                    WHERE resultado='R' or resultado='U' \n" +
 "	                    GROUP BY nombre, año) AS des \n" +
 "                    ON (ap.nombre=des.nombre and ap.año=des.año)";
@@ -245,8 +263,8 @@ public class AdminBD {
         }
     }
     
-    //Updates the view created with data asociated to multiple subject node in lines
-    private void createNodeView(List<Nodo> l){
+    //Updates the table of pass created with data asociated to multiple subject node in lines
+    private void generatePassPerNode(List<Nodo> l, String tableUsed, String passTableDestination){
         try{
 
             if(!con.isClosed()){
@@ -254,25 +272,26 @@ public class AdminBD {
                 //Create procedure to update view
                 String sql = "CREATE OR REPLACE FUNCTION createNodeView(nodename character varying,subjectnames character varying[]) RETURNS void AS $$\n" +
 "                BEGIN \n" +
-"                INSERT INTO "+ viewName +
+"                INSERT INTO "+ passTableDestination +
 "                SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, coalesce(t.total-aprobados, t.total) as desaprobados\n" +
 "                FROM\n" +
 "                --Sacamos la cuenta de los que cursaron alguna materia\n" +
 "                                (SELECT año,count(*) as total FROM\n" +
 "                                        (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
-"                                        FROM "+ tableName +
+"                                        FROM "+ tableUsed +
 "                                        WHERE nombre = ANY (subjectnames)\n" +
 "                                        GROUP BY año, legajo) as ax1\n" +
 "                                GROUP BY año) AS t\n" +
 "                        FULL JOIN \n" +
 "                                --Sacamos la cuenta de los que aprobaron todas las materias\n" +
-"                                (SELECT año,count(*) as aprobados FROM\n" +
-"                                        (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
-"                                        FROM "+ tableName +
-"                                        WHERE nombre = ANY (subjectnames) and resultado='A'\n" +
-"                                        GROUP BY año, legajo\n" +
-"                                        HAVING count(*)=array_length(subjectnames, 1)) as ax2\n" +
-"                                GROUP BY año) as a\n" +
+"                               (SELECT año, count(*) as aprobados FROM\n" +
+"                                   (SELECT MAX(año) as año, count(*) AS cantidad FROM\n" +
+"                                       (SELECT DISTINCT extract(year from fecha_regularidad) as año, legajo, nombre\n" +
+"                                       FROM "+ tableUsed + 
+"                                       WHERE nombre = ANY(subjectnames) and resultado='A') as x\n" +
+"                                   GROUP BY legajo) as y\n" +
+"                               WHERE cantidad = array_length(subjectnames, 1)\n" +
+"                               GROUP BY año) as a\n" +
 "                        ON (t.año=a.año);\n" +
 "                END;\n" +
 "                $$ LANGUAGE plpgsql;";
@@ -322,14 +341,22 @@ public class AdminBD {
     }
     
     //public method for constructing the data view
-    public void createView(List<Nodo> l){
-        this.createGeneralView();
-        this.createNodeView(l);
+    public void generatePassTable(List<Nodo> l, Integer añoCohorte){
+        String origen=this.filterCohort(añoCohorte);
+        String destino=getPassTable(añoCohorte);
+        this.generatePassPerSubject(origen,destino);
+        this.generatePassPerNode(l,origen,destino);
     }
 
-    //Devolvemos sólo un porcentaje por año
-    public float getPassPercentage(Nodo n){
-        String sql="SELECT avg(aprobados) FROM "+ viewName +
+    //Return pass pergentage of a node considering only the cohort year=año // año== null dont consider cohort
+    public float getPassPercentage(Nodo n, Integer añoCohorte){
+        String tableUsed=getPassTable(añoCohorte);
+        
+        if(tableUsed==null){
+            return -1;
+        }
+        
+        String sql="SELECT median(aprobados) FROM "+ tableUsed +
         "WHERE nombre=" + n.getNombre();
         float passPercentage=0f;
         try {
@@ -357,5 +384,13 @@ public class AdminBD {
         
         return false;
     }
-            
+    
+    private String getPassTable(Integer añoCohorte){
+        if (añoCohorte==null){
+            return generalPassTable;
+        } else {
+            return cohortPassTables.get(añoCohorte);
+        }
+    }
+    
 }

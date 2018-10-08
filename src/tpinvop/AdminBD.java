@@ -109,8 +109,7 @@ public class AdminBD {
             
         }
         catch(SQLException sqle){
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                                ") "+sqle.getMessage(), "Error de SQL");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
         }
         
     }
@@ -129,8 +128,7 @@ public class AdminBD {
                     stmt.execute(sql);
                 }
                 catch(SQLException sqle){
-                    InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                                ") "+sqle.getMessage(), "Error de SQL");
+                    InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
                 }
             }
             else
@@ -138,8 +136,7 @@ public class AdminBD {
                         ,"Atencion");
         }
         catch(SQLException sqle){
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                        ") "+sqle.getMessage(), "Error de DBMS");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
         }
     }
     
@@ -163,17 +160,12 @@ public class AdminBD {
                 catch(IOException io_exept){
                     InfoMsgBox.errBox("Error de entrada/salida: "+io_exept.getMessage(), "Error");
                 }
-                catch(SQLException sqle){
-                    InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                                ") "+sqle.getMessage(), "Error de SQL");
-                }
             
             }
         }
         catch(SQLException sqle){
         
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                        ") "+sqle.getMessage(), "Error de DBMS");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
         }
         
     }
@@ -194,8 +186,7 @@ public class AdminBD {
                     System.out.println("Filas filtradas.");
                 }
                 catch(SQLException sqle){
-                    InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                                ") "+sqle.getMessage(), "Error de SQL");
+                    InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
                 }
             }
             else
@@ -203,17 +194,30 @@ public class AdminBD {
                         ,"Atencion");
         }
         catch(SQLException sqle){
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                        ") "+sqle.getMessage(), "Error de DBMS");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
         }
     }
     
     private String filterCohort(Integer añocohorte){
         String nombreTabla=null;
-        if (añocohorte!=null){
+        if (añocohorte!=null && !cohortTables.containsKey(añocohorte)){
             nombreTabla="Cohorte"+añocohorte;
-            HACER ESTO
             
+            String str = "CREATE TABLE " + nombreTabla + " AS\n"
+                        +"SELECT carrera plan legajo materia fecha_regularidad resultado nota origen nombre\n"
+                        +"FROM Cursadas c FULL JOIN Alumnos a\n"
+                        +"    ON(c.legajo = a.legajo)\n"
+                        +"WHERE a.fecha_ingreso = " + añocohorte;
+            
+            try{
+                
+                Statement stmt = con.createStatement();
+                stmt.execute(str);
+                
+            }
+            catch(SQLException sqle){
+                InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
+            }
             
             cohortTables.put(añocohorte, nombreTabla);
         }
@@ -249,8 +253,7 @@ public class AdminBD {
                     stmt.execute(sql);
                 }
                 catch(SQLException sqle){
-                    InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                                ") "+sqle.getMessage(), "Error de SQL");
+                    InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
                 }
             }
             else
@@ -258,8 +261,7 @@ public class AdminBD {
                         ,"Atencion");
         }
         catch(SQLException sqle){
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                        ") "+sqle.getMessage(), "Error de DBMS");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
         }
     }
     
@@ -302,8 +304,7 @@ public class AdminBD {
                     System.out.println("Funcion creada");
                 }
                 catch(SQLException sqle){
-                    InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                                ") "+sqle.getMessage(), "Error de SQL");
+                    InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
                 }
                 
                 
@@ -325,8 +326,7 @@ public class AdminBD {
                         pstmt.execute();
                         System.out.print("Nodo calculado");
                     } catch (SQLException sqle) {
-                        InfoMsgBox.errBox("COD " + sqle.getErrorCode()
-                                + ") " + sqle.getMessage(), "Error de SQL");
+                        InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
                     }
                 }
             }
@@ -335,8 +335,7 @@ public class AdminBD {
                         ,"Atencion");
         }
         catch(SQLException sqle){
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                        ") "+sqle.getMessage(), "Error de DBMS");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
         }
     }
     
@@ -366,8 +365,7 @@ public class AdminBD {
             rs.next();
             passPercentage=rs.getFloat(1);
         } catch (SQLException sqle) {
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                        ") "+sqle.getMessage(), "Error de SQL");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
         }
         
         return passPercentage;
@@ -378,8 +376,7 @@ public class AdminBD {
             return !con.isClosed();
         }
         catch(SQLException sqle){
-            InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                        ") "+sqle.getMessage(), "Error de DBMS");
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
         }
         
         return false;

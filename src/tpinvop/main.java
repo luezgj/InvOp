@@ -3,6 +3,7 @@ package tpinvop;
 import java.util.LinkedList;
 import java.util.List;
 import tpinvop.Interfaz.VentanaResultados;
+import tpinvop.Interfaz.VentanaSimulacion;
 
 public class main {
     
@@ -21,6 +22,6 @@ public class main {
        List<Cadena> cadenas= genCadenas.getCadenas(IngSist);
        
        new VentanaResultados(cadenas).setVisible(true);
-       
+       new VentanaSimulacion(cadenas).setVisible(true);
     }
 }

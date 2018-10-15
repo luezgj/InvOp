@@ -218,11 +218,7 @@ public class Carrera{
     }
     
     public List<Linea> getLineas() {
-        List<Linea> out = new LinkedList<>();
-        for (Linea l : Lineas) {
-            out.add(l);
-        }
-        return out;
+        return Lineas;
     }
     
     //Devuelve el conjunto(sin repeticiones) de nodos que contiene la carrera

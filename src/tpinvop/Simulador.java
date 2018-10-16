@@ -49,5 +49,9 @@ public class Simulador {
         return probTransicionEstadoAcum;
     }
     
+    public int getCantidad(int nLinea,int nodo,int año){
+        return 100;
+    }
+    
     
 }

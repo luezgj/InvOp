@@ -21,7 +21,7 @@ public class main {
        
        List<Cadena> cadenas= genCadenas.getCadenas(IngSist);
        
-       new VentanaResultados(cadenas).setVisible(true);
-       new VentanaSimulacion(cadenas).setVisible(true);
+       //new VentanaResultados(cadenas).setVisible(true);
+       new VentanaSimulacion(cadenas,1).setVisible(true);
     }
 }

@@ -24,6 +24,7 @@ import tpinvop.Simulador;
 public class VentanaSimulacion extends javax.swing.JFrame {
     private ArrayList<mxGraph> graphs= new ArrayList();
     private List<Object> verticesAnteriores= new ArrayList();
+    boolean[] grafoCreado;
     
     final static private int DISTANCIAX_ENTRE_BLOQUES = 150;
     final static private int DISTANCIAY_ENTRE_BLOQUES = 70;
@@ -44,6 +45,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
         
         setSize(800,600);
         
+        grafoCreado=new boolean[cadenas.size()];
         this.añoInicio=añoInicio;
         
         int i=1;
@@ -63,7 +65,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
             i++;
         }
         
-        mostrarSimulacion(graphs.get(0), 1, cadenas);
+        mostrarSimulacion(graphs.get(0), 0, cadenas);
         
         tabs.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
@@ -76,38 +78,41 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     //Hacer que se genere(mostrarSimulacion) cuando cambias de pestaña
     
     private void mostrarSimulacion(mxGraph graph,int nLinea,List<Cadena> cadenas){
-        graph.getModel().beginUpdate();
-        System.out.println(cadenas.get(nLinea).getLinea().getCantMaterias());
-        int posX=15,posY=0;
-        Object parent=graph.getDefaultParent();
-        Object vertice;
-        boolean primero=false;
-        for (int añoRelativo=0;añoRelativo<CANTIDAD_AÑOS;añoRelativo++){
-            posY=15;
-            primero=true;
-            for(int nodo=añoRelativo+1;nodo>0;nodo--){
-                if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()){
-                    int añoActual=añoInicio+añoRelativo;
-                    String textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nLinea, nodo, añoRelativo);
-                    vertice = graph.insertVertex(parent,null,textoVertice,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
-                    verticesAnteriores.add(vertice);
+        if (!grafoCreado[nLinea]){
+            grafoCreado[nLinea]=true;
+            graph.getModel().beginUpdate();
+            System.out.println(cadenas.get(nLinea).getLinea().getCantMaterias());
+            int posX=15,posY=0;
+            Object parent=graph.getDefaultParent();
+            Object vertice;
+            boolean primero=false;
+            for (int añoRelativo=0;añoRelativo<CANTIDAD_AÑOS;añoRelativo++){
+                posY=15;
+                primero=true;
+                for(int nodo=añoRelativo+1;nodo>0;nodo--){
+                    if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()){
+                        int añoActual=añoInicio+añoRelativo;
+                        String textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nLinea, nodo, añoRelativo);
+                        vertice = graph.insertVertex(parent,null,textoVertice,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
+                        verticesAnteriores.add(vertice);
 
-                    if (primero && añoRelativo!=0 && añoRelativo+1<=cadenas.get(nLinea).getLinea().getCantMaterias()){
-                        graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(0), vertice);
-                        primero=false;
-                    }else if (añoRelativo!=0){
-                        graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(0), vertice);
-                        if (nodo!=1)
-                            graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(1), vertice);
-                        verticesAnteriores.remove(0);
+                        if (primero && añoRelativo!=0 && añoRelativo+1<=cadenas.get(nLinea).getLinea().getCantMaterias()){
+                            graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(0), vertice);
+                            primero=false;
+                        }else if (añoRelativo!=0){
+                            graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(0), vertice);
+                            if (nodo!=1)
+                                graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(1), vertice);
+                            verticesAnteriores.remove(0);
+                        }
                     }
+                    posY+=DISTANCIAY_ENTRE_BLOQUES;
                 }
-                posY+=DISTANCIAY_ENTRE_BLOQUES;
+                posX+=DISTANCIAX_ENTRE_BLOQUES;
             }
-            posX+=DISTANCIAX_ENTRE_BLOQUES;
+            graph.getModel().endUpdate();
+            verticesAnteriores.clear();
         }
-        graph.getModel().endUpdate();
-        verticesAnteriores.clear();
     }
 
     /**

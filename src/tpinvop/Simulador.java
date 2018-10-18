@@ -2,56 +2,90 @@ package tpinvop;
 
 public class Simulador {
    
+	public static final int ROWDIM=10;
+	public static final int COLDIM=10;
+	
+	List<Cadena> cadenas;
+	int[ROWDIM][COLDIM] alumnosXNodo;
+	int[ROWDIM][COLDIM] cantAprobados;
+	int cantAlumnos;
+	
+	public Simulador(List<Cadena> cadenas, int cantAlumnos) {
+		
+		this.cadenas = cadenas;
+		this.cantAlumnos = cantAlumnos;
+		alumnosXNodo[0][0] = cantAlumnos;
+	}
+	
     //Hacer metodo de simulacion**************************************************
-    
-    public static int primerSimbolo(float v0[]) {
-        float v0Acum[] = probAcumuladasVector(v0);
+	public void simular(int nLinea) {
+		
+		inicMatrices();
+		
+		Cadena c = cadenas.get(Linea);
+		int aprobados;
+		
+		for(int nodo = 0; nodo < DIMROW; nodo++)
+			for(int año = i; año < DIMCOL; año++){
+				
+				aprobados = simularGrupo(c, nodo);
+				cantAprobados[nodo][año] = aprobados;
+				
+				if(nodo+1 < DIMROW && año+1 < DIMCOL) {
+					alumnosXNodo[nodo+1][año+1] += aprobados;
+					alumnosXNodo[nodo][año+1] += cantAlumnos-aprobados;
+				}
+			}
+		
+	}
+	
+	private int simularGrupo(Cadena c, int nodo) {
+		
+		int cont = 0;
+		
+		for(int i = 1; i<= cantAlumnos; i++) {
+			
+			if(aprobado(c, nodo))
+				cont++
+		}
+		
+		return cont;
+	}
+	
+    private boolean aprobado(Cadena c, int nodo) {
+        
         double p = Math.random();
-        for (int i = 0; i < v0Acum.length; i++) {
-            if (p < v0Acum[i]) {
-                return i;
-            }
+        
+        if (p < c.getProbAprobar(nodo)) {
+            return true;
         }
-        return -1;
+        
+        return false;
     }
     
-    public static Boolean converge(float ant, float act, float COTA) {
-        return (Math.abs(ant - act) < COTA);
-    }
-
-    public static float[] probAcumuladasVector(float[] prob) {
-        float probAcum[] = new float[prob.length];
-        probAcum[0] = prob[0];
-        for (int i = 1; i < prob.length; i++) {
-            probAcum[i] = probAcum[i - 1] + prob[i];
-        }
-        return probAcum;
+    public int getCantidad(int nodo,int año){
+        return alumnosXNodo[nodo][año];
     }
     
-    static public boolean ConvergeVector(float[] probActual, float[] probAnterior, float epsilon) {
-        for (int i = 0; i < probActual.length; i++) {
-            if (!(Math.abs(probActual[i] - probAnterior[i]) < epsilon)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static public float[][] probAcumuladasMatriz(float[][] prob) // leemos por columna, es decir la columna 1 da las probabilidades de pasar a otro estado dado el estado 1
-    {
-        float probTransicionEstadoAcum[][] = new float[prob.length][prob[0].length];
-        //CopiarVector(prob[0], probTransicionEstadoAcum[0]);
-        for (int i = 1; i < prob.length; i++) {
-            for (int j = 0; j < prob[i].length; j++) {
-                probTransicionEstadoAcum[i][j] = probTransicionEstadoAcum[i - 1][j] + prob[i][j];
-            }
-        }
-        return probTransicionEstadoAcum;
+    public int getAprobados(int nodo, int año) {
+    	return cantAprobados[nodo][año];
     }
     
-    public int getCantidad(int nLinea,int nodo,int año){
-        return 100;
+    public int getDesaprobados(int nodo, int año) {
+    	return alumnosXNodo[nodo][año] - cantAprobados[nodo][año];
     }
     
-    
+    private void inicMatrices() {
+    	
+    	for(int nodo = 0; nodo < DIMROW; nodo++)
+			for(int año = i; año < DIMCOL; año++){
+				if(nodo == 0)
+					alumnosXNodo[nodo][año] = cantAlumnos;
+				else {
+					alumnosXNodo[nodo][año] = 0;
+					cantAprobados[nodo][año] = 0;
+				}
+			}
+    }
+    	
 }

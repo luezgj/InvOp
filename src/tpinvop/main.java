@@ -1,12 +1,15 @@
 package tpinvop;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import tpinvop.Interfaz.VentanaResultados;
 import tpinvop.Interfaz.VentanaSimulacion;
 
 public class main {
-    
+    public static final int _AÑO_PRIMER_COHORTE=2011;
+    public static final int _AÑO_ULTIMA_COHORTE=2017;
     public static void main(String[] args) {
        Carrera IngSist=new Carrera("Ingeniero en Sistemas","recursos/Correlatividades.txt");
        /*AdminBD db = new AdminBD("cursadas","vista");
@@ -17,11 +20,15 @@ public class main {
        db.filterData(206, "2011");
 
        */
+      Map<Integer, Cohorte> cohortes= new HashMap();
       GeneradorCadena genCadenas = new GeneradorCadena(null);
        
-       List<Cadena> cadenas= genCadenas.getCadenas(IngSist);
-       
+      for (int año=_AÑO_PRIMER_COHORTE;año<=_AÑO_ULTIMA_COHORTE;año++){
+        List<Cadena> cadenas= genCadenas.getCadenas(IngSist,año);
+        Cohorte cohorte= new Cohorte(cadenas, año);
+        cohortes.put(año, cohorte);
+      }
        //new VentanaResultados(cadenas).setVisible(true);
-       new VentanaSimulacion(cadenas,1).setVisible(true);
+       new VentanaSimulacion(cohortes.get(_AÑO_PRIMER_COHORTE),1).setVisible(true);
     }
 }

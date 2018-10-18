@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import tpinvop.Cadena;
+import tpinvop.Cohorte;
 import tpinvop.Simulador;
 
 /**
@@ -34,22 +35,24 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     final static private int CANTIDAD_AÑOS = 9;
     private int añoInicio;
     
-    private Simulador simulador= new Simulador();
+    private Simulador simulador;
     
     /**
      * Creates new form VentanaSimulacion
      * @param cadenas
      */
-    public VentanaSimulacion(List<Cadena> cadenas,int añoInicio) {
+    public VentanaSimulacion(Cohorte cohorte,int añoInicio) {
         initComponents();
         
         setSize(800,600);
         
-        grafoCreado=new boolean[cadenas.size()];
+        simulador= new Simulador(/*cadenas*/);
+        
+        grafoCreado=new boolean[cohorte.getCadenas().size()];
         this.añoInicio=añoInicio;
         
         int i=1;
-        for (Cadena cadena: cadenas){
+        for (Cadena cadena: cohorte.getCadenas()){
             JPanel tab = new JPanel();
             mxGraph graph= new mxGraph();
             mxGraphComponent graphComponent = new mxGraphComponent(graph);
@@ -65,11 +68,11 @@ public class VentanaSimulacion extends javax.swing.JFrame {
             i++;
         }
         
-        mostrarSimulacion(graphs.get(0), 0, cadenas);
+        mostrarSimulacion(graphs.get(0), 0, cohorte.getCadenas());
         
         tabs.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                mostrarSimulacion(graphs.get(tabs.getSelectedIndex()), tabs.getSelectedIndex(), cadenas);
+                mostrarSimulacion(graphs.get(tabs.getSelectedIndex()), tabs.getSelectedIndex(), cohorte.getCadenas());
             }
         });
         
@@ -80,6 +83,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     private void mostrarSimulacion(mxGraph graph,int nLinea,List<Cadena> cadenas){
         if (!grafoCreado[nLinea]){
             grafoCreado[nLinea]=true;
+            simulador.simular(nLinea);
             graph.getModel().beginUpdate();
             System.out.println(cadenas.get(nLinea).getLinea().getCantMaterias());
             int posX=15,posY=0;
@@ -92,17 +96,17 @@ public class VentanaSimulacion extends javax.swing.JFrame {
                 for(int nodo=añoRelativo+1;nodo>0;nodo--){
                     if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()){
                         int añoActual=añoInicio+añoRelativo;
-                        String textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nLinea, nodo, añoRelativo);
+                        String textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nodo, añoRelativo);
                         vertice = graph.insertVertex(parent,null,textoVertice,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
                         verticesAnteriores.add(vertice);
 
                         if (primero && añoRelativo!=0 && añoRelativo+1<=cadenas.get(nLinea).getLinea().getCantMaterias()){
-                            graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(0), vertice);
+                            graph.insertEdge(parent, null, simulador.getAprobados(nodo, añoRelativo), verticesAnteriores.get(0), vertice);
                             primero=false;
                         }else if (añoRelativo!=0){
-                            graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(0), vertice);
+                            graph.insertEdge(parent, null, simulador.getAprobados(nodo, añoRelativo), verticesAnteriores.get(0), vertice);
                             if (nodo!=1)
-                                graph.insertEdge(parent, null, "#Pasan", verticesAnteriores.get(1), vertice);
+                                graph.insertEdge(parent, null, simulador.getDesaprobados(nodo, añoRelativo), verticesAnteriores.get(1), vertice);
                             verticesAnteriores.remove(0);
                         }
                     }

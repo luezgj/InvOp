@@ -9,7 +9,6 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
@@ -26,6 +25,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     private ArrayList<mxGraph> graphs= new ArrayList();
     private List<Object> verticesAnteriores= new ArrayList();
     boolean[] grafoCreado;
+    final static private int alumnosInicio=120;
     
     final static private int DISTANCIAX_ENTRE_BLOQUES = 150;
     final static private int DISTANCIAY_ENTRE_BLOQUES = 70;
@@ -39,14 +39,15 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     
     /**
      * Creates new form VentanaSimulacion
-     * @param cadenas
+     * @param cohorte
+     * @param añoInicio
      */
     public VentanaSimulacion(Cohorte cohorte,int añoInicio) {
         initComponents();
         
         setSize(800,600);
         
-        simulador= new Simulador(/*cadenas*/);
+        simulador= new Simulador(cohorte.getCadenas(),alumnosInicio);
         
         grafoCreado=new boolean[cohorte.getCadenas().size()];
         this.añoInicio=añoInicio;

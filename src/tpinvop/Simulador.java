@@ -1,17 +1,18 @@
 package tpinvop;
 
+import java.util.List;
+
 public class Simulador {
    
 	public static final int ROWDIM=10;
 	public static final int COLDIM=10;
 	
 	List<Cadena> cadenas;
-	int[ROWDIM][COLDIM] alumnosXNodo;
-	int[ROWDIM][COLDIM] cantAprobados;
+	int[][] alumnosXNodo=new int[ROWDIM][COLDIM];
+	int[][] cantAprobados=new int[ROWDIM][COLDIM];
 	int cantAlumnos;
 	
 	public Simulador(List<Cadena> cadenas, int cantAlumnos) {
-		
 		this.cadenas = cadenas;
 		this.cantAlumnos = cantAlumnos;
 		alumnosXNodo[0][0] = cantAlumnos;
@@ -22,16 +23,16 @@ public class Simulador {
 		
 		inicMatrices();
 		
-		Cadena c = cadenas.get(Linea);
+		Cadena c = cadenas.get(nLinea);
 		int aprobados;
 		
-		for(int nodo = 0; nodo < DIMROW; nodo++)
-			for(int año = i; año < DIMCOL; año++){
+		for(int nodo = 0; nodo < ROWDIM; nodo++)
+			for(int año = nodo; año < COLDIM; año++){
 				
 				aprobados = simularGrupo(c, nodo);
 				cantAprobados[nodo][año] = aprobados;
 				
-				if(nodo+1 < DIMROW && año+1 < DIMCOL) {
+				if(nodo+1 < ROWDIM && año+1 < COLDIM) {
 					alumnosXNodo[nodo+1][año+1] += aprobados;
 					alumnosXNodo[nodo][año+1] += cantAlumnos-aprobados;
 				}
@@ -46,7 +47,7 @@ public class Simulador {
 		for(int i = 1; i<= cantAlumnos; i++) {
 			
 			if(aprobado(c, nodo))
-				cont++
+				cont++;
 		}
 		
 		return cont;
@@ -77,8 +78,8 @@ public class Simulador {
     
     private void inicMatrices() {
     	
-    	for(int nodo = 0; nodo < DIMROW; nodo++)
-			for(int año = i; año < DIMCOL; año++){
+    	for(int nodo = 0; nodo < ROWDIM; nodo++)
+			for(int año = nodo; año < COLDIM; año++){
 				if(nodo == 0)
 					alumnosXNodo[nodo][año] = cantAlumnos;
 				else {

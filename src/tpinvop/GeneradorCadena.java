@@ -16,7 +16,7 @@ public class GeneradorCadena {
         Cadena c=new Cadena(linea);
         int nroNodo=0;
         for(Nodo n: linea){
-            //c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n,año));
+            c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n,año));
             nroNodo++;
         }
         return c;
@@ -32,7 +32,7 @@ public class GeneradorCadena {
         return cadenas;
     }
     
-    public List<Cadena> getCadenas(Carrera carrera, int año){
+    public List<Cadena> getCadenas(Carrera carrera, Integer año){
         List<Linea> lineas=carrera.getLineas();
         List<Cadena> cadenas=new LinkedList<>();
         for(Linea l:lineas){

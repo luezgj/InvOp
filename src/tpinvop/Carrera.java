@@ -222,7 +222,13 @@ public class Carrera{
     //Devuelve el conjunto(sin repeticiones) de nodos que contiene la carrera
     public List<Nodo> getNodos(){
         List<Nodo> outNodos= new LinkedList<>();
-        
+        for (Linea linea: Lineas){
+            for(Nodo nodo: linea.getNodos()){
+                if(nodo.getCantMaterias()!=1 && !outNodos.contains(nodo)){
+                    outNodos.add(nodo);
+                }
+            }
+        } 
         return outNodos;
     }
 

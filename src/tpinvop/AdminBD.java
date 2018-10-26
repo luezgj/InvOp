@@ -6,9 +6,13 @@ import java.io.Reader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.postgresql.core.BaseConnection;
 import org.postgresql.copy.CopyManager;
 
@@ -21,12 +25,14 @@ public class AdminBD {
     
     Connection con;
     String generalTable;
+    String studentsTable;
     String generalPassTable;
     Map<Integer,String> cohortPassTables= new HashMap<>();
     Map<Integer,String> cohortTables= new HashMap<>();
             
-    public AdminBD(String tableName, String viewName) {
+    public AdminBD(String tableName, String viewName, String studentsTable) {
         this.generalTable = tableName;
+        this.studentsTable = studentsTable;
         this.generalPassTable = viewName;
     }
     
@@ -83,7 +89,7 @@ public class AdminBD {
         }
     }
     
-    public void createTable(){  // Creates a table with the specified name
+    public void createCoursedTable(){  // Creates a table with the specified name
         
         // Sql statement for creating the base table
         
@@ -110,6 +116,33 @@ public class AdminBD {
         }
         catch(SQLException sqle){
             InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+            System.out.println("ERROR2");
+        }
+        
+    }
+    
+    public void createStudentsTable(){  // Creates a table with the specified name
+        
+        // Sql statement for creating the base table
+        
+        String sql = "CREATE TABLE IF NOT EXISTS "+ studentsTable  +
+                "(carrera int,"
+                + "legajo int,"
+                + "fecha_ingreso date);";
+        
+        Statement stmt;
+        
+        // Executing SQL statement through DBMS 
+        try{
+            
+            stmt = con.createStatement();
+            stmt.executeUpdate(sql);
+            System.out.println("Tabla alumnos creada correctamente");
+            
+        }
+        catch(SQLException sqle){
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+            System.out.println("ERROR3");
         }
         
     }
@@ -141,7 +174,7 @@ public class AdminBD {
     }
     
     //Loads a CSV file into the DB
-    public void loadCSV(String dirA){
+    public void loadCoursedCSV(String dirA){
         
         try{
             if(!con.isClosed()){
@@ -170,23 +203,94 @@ public class AdminBD {
         
     }
     
+    //Loads a CSV file into the DB
+    public void loadStudentsCSV(String dirA){
+        
+        try{
+            if(!con.isClosed()){
+                
+                String sql = "copy "+ studentsTable +"(carrera,legajo,fecha_ingreso) FROM stdin DELIMITER ',' CSV header";
+
+                BaseConnection pgcon = (BaseConnection)con;
+                CopyManager mgr = new CopyManager(pgcon);
+                
+                try{
+                    //String comando="awk -F, '{print $1, $2, $4}' "+ dirA;
+                    //String comando="cut -d ',' -f 1,2,4 "+ dirA;
+                    String comando="cat "+ dirA;
+                    System.out.println(comando);
+                    Process p = Runtime.getRuntime().exec(comando);
+                    
+                    BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    
+                    /*
+                    String s = null;
+                    System.out.println("LEYENDO LINEAS DE ALUMNOS");
+                    while ((s=in.readLine())!=null)
+                    {
+
+                    System.out.println(s);
+                    }*/
+                    
+                    long rowsaffected  = mgr.copyIn(sql,in);
+
+                    System.out.println("CSV cargado correctamente. Filas copiadas: " + rowsaffected);
+                }
+                catch(Exception exept){
+                    InfoMsgBox.errBox("Error : "+exept.getMessage(), "Error");
+                }
+                
+            
+            }
+        }
+        catch(SQLException sqle){
+        
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
+        }
+        
+    }
+    
     //Deletes the not useful data from table
-    public void filterData(int carrera, String plan){
+    public void filterCoursedData(int carrera, String plan){
         
         try{
             
             if(!con.isClosed()){
                 String sql = "DELETE FROM "+ generalTable +
-                        "WHERE carrera!='" + carrera +"' or plan!='" + plan + 
+                        " WHERE carrera !='" + carrera +"' or plan != '" + plan + 
                         "' or origen='Cursada Equivalente' or origen='Equivalencia'; ";
-
                 try{
                     Statement stmt = con.createStatement();
                     stmt.execute(sql);
-                    System.out.println("Filas filtradas.");
                 }
                 catch(SQLException sqle){
                     InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+                    System.out.println("ERROR4");
+                }
+            }
+            else
+                InfoMsgBox.infoBox("La conexion con la base de datos ha sido cerrada, por favor reconectar."
+                        ,"Atencion");
+        }
+        catch(SQLException sqle){
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
+        }
+    }
+    
+    public void filterStudentsData(int carrera){
+        
+        try{
+            
+            if(!con.isClosed()){
+                String sql = "DELETE FROM "+ studentsTable +
+                        " WHERE carrera !='" + carrera +"';";
+                try{
+                    Statement stmt = con.createStatement();
+                    stmt.execute(sql);
+                }
+                catch(SQLException sqle){
+                    InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+                    System.out.println("ERROR5");
                 }
             }
             else
@@ -199,24 +303,25 @@ public class AdminBD {
     }
     
     private String filterCohort(Integer añocohorte){
-        String nombreTabla=null;
+        String nombreTabla=generalTable;
         if (añocohorte!=null && !cohortTables.containsKey(añocohorte)){
             nombreTabla="Cohorte"+añocohorte;
             
             String str = "CREATE TABLE " + nombreTabla + " AS\n"
-                        +"SELECT carrera plan legajo materia fecha_regularidad resultado nota origen nombre\n"
-                        +"FROM Cursadas c FULL JOIN Alumnos a\n"
+                        +"SELECT c.carrera, plan, c.legajo, materia, fecha_regularidad, resultado, nota, origen, nombre\n"
+                        +"FROM "+generalTable +" c INNER JOIN "+studentsTable+" a"
                         +"    ON(c.legajo = a.legajo)\n"
-                        +"WHERE a.fecha_ingreso = " + añocohorte;
-            
+                        +"WHERE date_part('year',a.fecha_ingreso) = " + añocohorte;
+            System.out.println(str);
             try{
-                
+                System.out.println("");
                 Statement stmt = con.createStatement();
                 stmt.execute(str);
                 
             }
             catch(SQLException sqle){
                 InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
+                System.out.println("Error filtrando cohorte");
             }
             
             cohortTables.put(añocohorte, nombreTabla);
@@ -230,7 +335,9 @@ public class AdminBD {
 
             if(!con.isClosed()){
                 
-                
+                System.out.println("PassPerSubject: ");
+                System.out.println("PassPerSubject: "+passTableDestination);
+                System.out.println("TableUsed: "+tableUsed);
                 
                 String sql= "CREATE TABLE "+ passTableDestination +" AS SELECT coalesce(ap.año, des.año) as año, \n" +
 "                    coalesce(ap.nombre, des.nombre) as nombre, \n" +
@@ -254,6 +361,7 @@ public class AdminBD {
                 }
                 catch(SQLException sqle){
                     InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+                    System.out.println("ERROR1");
                 }
             }
             else
@@ -305,6 +413,7 @@ public class AdminBD {
                 }
                 catch(SQLException sqle){
                     InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+                    System.out.println("ERROR6");
                 }
                 
                 
@@ -327,6 +436,7 @@ public class AdminBD {
                         System.out.print("Nodo calculado");
                     } catch (SQLException sqle) {
                         InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+                        System.out.println("ERROR7");
                     }
                 }
             }
@@ -341,33 +451,54 @@ public class AdminBD {
     
     //public method for constructing the data view
     public void generatePassTable(List<Nodo> l, Integer añoCohorte){
+        System.out.println("");
+        System.out.println("generatePassTable: "+ añoCohorte);
+        System.out.println("");
+        System.out.println("LLAMO A FILTERCOHORT");
         String origen=this.filterCohort(añoCohorte);
-        String destino=getPassTable(añoCohorte);
+        String destino=creationPassTable(añoCohorte);
+        System.out.println("LLAMO A GENERATEPASSPERSUBJECT");
         this.generatePassPerSubject(origen,destino);
+        System.out.println("LLAMO A GENERATEPASSPERNODE");
+        System.out.println("cantidad nodos: "+l.size());
         this.generatePassPerNode(l,origen,destino);
     }
 
     //Return pass pergentage of a node considering only the cohort year=año // año== null dont consider cohort
     public float getPassPercentage(Nodo n, Integer añoCohorte){
         String tableUsed=getPassTable(añoCohorte);
-        
+        System.out.println("Saco porcentaje del nodo: "+n.getNombre()+"- año: "+añoCohorte+"- Tabla:"+tableUsed);
         if(tableUsed==null){
             return -1;
         }
         
-        String sql="SELECT median(aprobados) FROM "+ tableUsed +
-        "WHERE nombre=" + n.getNombre();
+        String sql="SELECT aprobados,aprobados+desaprobados as total FROM "+ tableUsed +  //Cambiar por media
+        " WHERE nombre='" + n.getNombre()+"'";
+        System.out.println(sql);
+        List<Float> porcentajeAprobados= new LinkedList();
+        List<Integer> totalPorAño= new LinkedList();
+        int totalNodo=0;
         float passPercentage=0f;
         try {
             Statement stmt;
             stmt = con.createStatement();
             ResultSet rs= stmt.executeQuery(sql);
-            rs.next();
-            passPercentage=rs.getFloat(1);
+            while(rs.next()){
+                Float aprobados=rs.getFloat(1);
+                int total=rs.getInt(2);
+                porcentajeAprobados.add(aprobados/total);
+                totalPorAño.add(total);
+                totalNodo+=total;
+            }
+            for(int i=0;i<porcentajeAprobados.size();i++){
+                float ponderacionAño=(float)(totalPorAño.get(i))/totalNodo;
+                passPercentage+=porcentajeAprobados.get(i)*ponderacionAño;
+            }
         } catch (SQLException sqle) {
+            System.out.println("ERROR8");
             InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
         }
-        
+        System.out.println("Porcentaje: "+passPercentage);
         return passPercentage;
     }
     
@@ -387,6 +518,16 @@ public class AdminBD {
             return generalPassTable;
         } else {
             return cohortPassTables.get(añoCohorte);
+        }
+    }
+    
+    private String creationPassTable(Integer añoCohorte){
+        if (añoCohorte==null){
+            return generalPassTable;
+        } else {
+            String passTable= new String("pass"+añoCohorte);
+            cohortPassTables.put(añoCohorte, passTable);
+            return passTable;
         }
     }
     

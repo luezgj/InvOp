@@ -20,16 +20,16 @@ public class Simulador {
 	
     //Hacer metodo de simulacion**************************************************
 	public void simular(int nLinea) {
-		
+		System.out.println("simular llamado");
 		inicMatrices();
 		
 		Cadena c = cadenas.get(nLinea);
-		int aprobados;
 		
 		for(int nodo = 0; nodo < ROWDIM; nodo++)
 			for(int año = nodo; año < COLDIM; año++){
-				
-				aprobados = simularGrupo(c, nodo);
+				int aprobados = simularGrupo(c, nodo);
+                                System.out.println("Nodo: "+nodo+" - Año: "+año+" - Prob: "+c.getProbAprobar(nodo)+" - Cant: "+aprobados);
+                                
 				cantAprobados[nodo][año] = aprobados;
 				
 				if(nodo+1 < ROWDIM && año+1 < COLDIM) {

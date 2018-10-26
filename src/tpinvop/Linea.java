@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Linea implements Iterable<Nodo>{
     int id;
-    List<Nodo> Materias;
+    private List<Nodo> Materias;
     
     public Linea(int id){
         this.id=id;
@@ -68,6 +68,10 @@ public class Linea implements Iterable<Nodo>{
     @Override
     public Iterator<Nodo> iterator() {
         return Materias.iterator();
+    }
+    
+    public List<Nodo>getNodos() {
+        return Materias;
     }
     
 }

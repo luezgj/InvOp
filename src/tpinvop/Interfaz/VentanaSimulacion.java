@@ -84,6 +84,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     private void mostrarSimulacion(mxGraph graph,int nLinea,List<Cadena> cadenas){
         if (!grafoCreado[nLinea]){
             grafoCreado[nLinea]=true;
+            System.out.println("Llamo a simular");
             simulador.simular(nLinea);
             graph.getModel().beginUpdate();
             System.out.println(cadenas.get(nLinea).getLinea().getCantMaterias());

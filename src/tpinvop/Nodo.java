@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
 
-public class Nodo implements Iterable<Materia> {
+public class Nodo implements Iterable<Materia>, Comparable<Nodo>{
     List<Materia> Materias;
     boolean sorted;
     
@@ -84,6 +84,15 @@ public class Nodo implements Iterable<Materia> {
                 Materias.remove(pos);
             pos++;
         }
+    }
+
+    @Override
+    public int compareTo(Nodo o) {
+        return getNombre().compareTo(o.getNombre());
+    }
+    
+    public boolean equals (Nodo o){
+        return this.compareTo(o)==0;
     }
     
     protected class IteratorMateria implements Iterator<Materia>

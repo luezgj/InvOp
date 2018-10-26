@@ -13,8 +13,8 @@ public class main {
     public static void main(String[] args) {
        Carrera IngSist=new Carrera("Ingeniero en Sistemas","recursos/Correlatividades.txt");
        
-       IngSist.getNodos();
        AdminBD db = new AdminBD("cursadas","vista","alumnos");
+
        
        db.connectDatabase();
        db.createCoursedTable();

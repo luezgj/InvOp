@@ -5,6 +5,7 @@
  */
 package tpinvop.Interfaz;
 
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
@@ -17,15 +18,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
      * Creates new form VentanaPrincipal
      */
     private VentanaCSV windowCSV;
-    private VentanaBD windowBD;
     private VentanaResultados windowResultados;
     
     public VentanaPrincipal() {
+        super("Analizador de carreras");
         initComponents();
         this.setLocationRelativeTo(null);
         GrupoBotones.add(Opcion1);
         GrupoBotones.add(Opcion2);
         GrupoBotones.add(Opcion3);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     /**
@@ -131,16 +133,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void EjecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EjecutarActionPerformed
         windowCSV=new VentanaCSV();
-        windowBD=new VentanaBD();
-        windowResultados= new VentanaResultados();
         if (Opcion1.isSelected()){
             this.setVisible(false);
             windowCSV.setVisible(true);
         } else if (Opcion2.isSelected()){
             this.setVisible(false);
-            windowBD.setVisible(true);
         } else {
-            windowResultados.setVisible(true);
+            
         }
     }//GEN-LAST:event_EjecutarActionPerformed
 

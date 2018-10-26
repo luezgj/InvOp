@@ -11,7 +11,7 @@ public class main {
     public static final int _AÑO_PRIMER_COHORTE=2011;
     public static final int _AÑO_ULTIMA_COHORTE=2017;
     public static void main(String[] args) {
-       Carrera IngSist=new Carrera("Ingeniero en Sistemas","recursos/Correlatividades.txt");
+       Carrera IngSist=new Carrera("recursos/Correlatividades.txt");
        /*AdminBD db = new AdminBD("cursadas","vista");
        
        db.connectDatabase();

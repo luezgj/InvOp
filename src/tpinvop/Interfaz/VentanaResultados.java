@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import tpinvop.Materia;
 import tpinvop.Nodo;
 import tpinvop.Cadena;
+import static tpinvop.main._AÑO_PRIMER_COHORTE;
 
 public class VentanaResultados extends javax.swing.JFrame {
 
@@ -36,7 +37,7 @@ public class VentanaResultados extends javax.swing.JFrame {
 
     void crearCadenas(List<Cadena> cadenas){
         graph = new mxGraph();
-       
+        
         graph.getModel().beginUpdate();
         
         parent = graph.getDefaultParent();
@@ -86,7 +87,6 @@ public class VentanaResultados extends javax.swing.JFrame {
             posX+=DISTANCIAX_ENTRE_BLOQUES;
 
         }
-
     }
     
     @SuppressWarnings("unchecked")
@@ -106,16 +106,16 @@ public class VentanaResultados extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(44, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addGap(39, 39, 39))
         );
 
         pack();

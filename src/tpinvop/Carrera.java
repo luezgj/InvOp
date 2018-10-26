@@ -14,14 +14,12 @@ import java.util.List;
 
 public class Carrera{
     
-    String nombre;
     List<Linea> Lineas;
     List<Materia> Materias;
     HashMap<Integer,Boolean> materiaUsada;
     
     //Constructor carrera
-    public Carrera(String nombre,String ruta){
-        this.nombre=nombre;
+    public Carrera(String ruta){
         GenerarLineas(ruta);
     }
     

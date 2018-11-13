@@ -14,11 +14,11 @@ public class InfoMsgBox {
     
     public static void infoBox(String infoMsg, String titleBar){
         
-        JOptionPane.showMessageDialog(null, infoMsg, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, infoMsg, titleBar, JOptionPane.INFORMATION_MESSAGE);
     }
     
     public static void errBox(String errMsg, String titleBar){
-        JOptionPane.showMessageDialog(null, errMsg, "InfoBox: " + titleBar, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, errMsg, titleBar, JOptionPane.ERROR_MESSAGE);
     }
             
 }

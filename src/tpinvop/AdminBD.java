@@ -85,8 +85,9 @@ public class AdminBD {
             System.out.println("Conectado");
             } 
         catch (java.sql.SQLException sqle) {
-            System.out.println("Error: " + sqle);
+            InfoMsgBox.errBox(sqle.getMessage(), "Error!");
         }
+        
     }
     
     public void createCoursedTable(){  // Creates a table with the specified name
@@ -94,7 +95,8 @@ public class AdminBD {
         // Sql statement for creating the base table
         
         String sql = "CREATE TABLE IF NOT EXISTS "+ generalTable  +
-                "(carrera varchar,"
+                "( nro_entrada bigint PRIMARY KEY, "
+                + "carrera varchar,"
                 + "plan varchar(4),"
                 + "legajo int,"
                 + "materia int,"
@@ -128,7 +130,9 @@ public class AdminBD {
         String sql = "CREATE TABLE IF NOT EXISTS "+ studentsTable  +
                 "(carrera int,"
                 + "legajo int,"
-                + "fecha_ingreso date);";
+                + "fecha_ingreso date);"
+                + "ALTER TABLE " + studentsTable + " ADD CONSTRAINT PK_" + studentsTable
+                + " PRIMARY KEY (legajo, carrera)";
         
         Statement stmt;
         
@@ -382,27 +386,29 @@ public class AdminBD {
                 //Create procedure to update view
                 String sql = "CREATE OR REPLACE FUNCTION createNodeView(nodename character varying,subjectnames character varying[]) RETURNS void AS $$\n" +
 "                BEGIN \n" +
+//"                TRUNCATE " + passTableDestination + ";"+                        
 "                INSERT INTO "+ passTableDestination +
 "                SELECT coalesce(t.año, a.año) as año, nodename as nombre , coalesce(a.aprobados, 0) as aprobados, coalesce(t.total-aprobados, t.total) as desaprobados\n" +
 "                FROM\n" +
 "                --Sacamos la cuenta de los que cursaron alguna materia\n" +
-"                                (SELECT año,count(*) as total FROM\n" +
-"                                        (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
-"                                        FROM "+ tableUsed +
-"                                        WHERE nombre = ANY (subjectnames)\n" +
-"                                        GROUP BY año, legajo) as ax1\n" +
-"                                GROUP BY año) AS t\n" +
-"                        FULL JOIN \n" +
-"                                --Sacamos la cuenta de los que aprobaron todas las materias\n" +
-"                               (SELECT año, count(*) as aprobados FROM\n" +
-"                                   (SELECT MAX(año) as año, count(*) AS cantidad FROM\n" +
-"                                       (SELECT DISTINCT extract(year from fecha_regularidad) as año, legajo, nombre\n" +
-"                                       FROM "+ tableUsed + 
-"                                       WHERE nombre = ANY(subjectnames) and resultado='A') as x\n" +
-"                                   GROUP BY legajo) as y\n" +
-"                               WHERE cantidad = array_length(subjectnames, 1)\n" +
-"                               GROUP BY año) as a\n" +
-"                        ON (t.año=a.año);\n" +
+"                   (SELECT año, count(*) as total FROM\n" +
+"                       (SELECT extract(year from fecha_regularidad) as año, legajo\n" +
+"                       FROM "+ tableUsed +
+"                       WHERE nombre = ANY (subjectnames)\n" +
+"                       GROUP BY año, legajo) as ax1\n" +
+"                   GROUP BY año) AS t\n" +
+"                   FULL JOIN \n" +
+"                   --Sacamos la cuenta de los que aprobaron todas las materias\n" +
+"                   (SELECT año, count(*) as aprobados FROM\n" +
+"                       (SELECT MAX(año) as año, count(*) AS cantidad \n" +
+"                       FROM\n" +
+"                           (SELECT DISTINCT extract(year from fecha_regularidad) as año, legajo, nombre\n" +
+"                           FROM "+ tableUsed + 
+"                           WHERE nombre = ANY(subjectnames) and (resultado='A' or resultado = 'P')) as x\n" +
+"                           GROUP BY legajo) as y\n" +
+"                       WHERE cantidad = array_length(subjectnames, 1)\n" +
+"                   GROUP BY año) as a\n" +
+"                   ON (t.año=a.año);\n" +
 "                END;\n" +
 "                $$ LANGUAGE plpgsql;";
                 
@@ -427,7 +433,6 @@ public class AdminBD {
                             i++;
                         }
                         java.sql.Array arrayMaterias= con.createArrayOf("varchar", materias);
-                        
                         sql="SELECT * FROM createNodeView (?, ?)";
                         PreparedStatement pstmt = con.prepareStatement(sql);
                         pstmt.setString(1,n.getNombre());
@@ -439,6 +444,7 @@ public class AdminBD {
                         System.out.println("ERROR7");
                     }
                 }
+                
             }
             else
                 InfoMsgBox.infoBox("La conexion con la base de datos ha sido cerrada, por favor reconectar."

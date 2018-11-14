@@ -95,20 +95,20 @@ public class VentanaSimulacion extends javax.swing.JFrame {
             for (int añoRelativo=0;añoRelativo<CANTIDAD_AÑOS;añoRelativo++){
                 posY=15;
                 primero=true;
-                for(int nodo=añoRelativo+1;nodo>0;nodo--){
-                    if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()){
+                for(int nodo=añoRelativo;nodo>=0;nodo--){
+                    if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()-1){
                         int añoActual=añoInicio+añoRelativo;
                         String textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nodo, añoRelativo);
                         vertice = graph.insertVertex(parent,null,textoVertice,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
                         verticesAnteriores.add(vertice);
 
                         if (primero && añoRelativo!=0 && añoRelativo+1<=cadenas.get(nLinea).getLinea().getCantMaterias()){
-                            graph.insertEdge(parent, null, simulador.getAprobados(nodo, añoRelativo), verticesAnteriores.get(0), vertice);
+                            graph.insertEdge(parent, null, simulador.getAprobados(nodo-1, añoRelativo-1), verticesAnteriores.get(0), vertice);
                             primero=false;
                         }else if (añoRelativo!=0){
-                            graph.insertEdge(parent, null, simulador.getAprobados(nodo, añoRelativo), verticesAnteriores.get(0), vertice);
-                            if (nodo!=1)
-                                graph.insertEdge(parent, null, simulador.getDesaprobados(nodo, añoRelativo), verticesAnteriores.get(1), vertice);
+                            graph.insertEdge(parent, null, simulador.getDesaprobados(nodo, añoRelativo-1), verticesAnteriores.get(0), vertice);
+                            if (nodo!=0)
+                                graph.insertEdge(parent, null, simulador.getAprobados(nodo-1, añoRelativo-1), verticesAnteriores.get(1), vertice);
                             verticesAnteriores.remove(0);
                         }
                     }

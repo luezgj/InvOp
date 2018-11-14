@@ -15,7 +15,6 @@ public class Simulador {
     public Simulador(List<Cadena> cadenas, int cantAlumnos) {
             this.cadenas = cadenas;
             this.cantAlumnos = cantAlumnos;
-            alumnosXNodo[0][0] = cantAlumnos;
     }
 	
 
@@ -33,10 +32,16 @@ public class Simulador {
                             System.out.println("Nodo: "+nodo+" - Año: "+año+" - Prob: "+c.getProbAprobar(nodo)+" - Cant: "+aprobados);
 
                             cantAprobados[nodo][año] = aprobados;
-
-                            if(nodo+1 < ROWDIM && año+1 < COLDIM) {
+                                
+                            System.out.println("ACa estoy");
+                            if((nodo+1 < ROWDIM) && (año+1 < COLDIM)) {
                                     alumnosXNodo[nodo+1][año+1] += aprobados;
-                                    alumnosXNodo[nodo][año+1] += cantAlumnos-aprobados;
+                                    System.out.println("Mismo nodo, año siguiente: Antes: "+alumnosXNodo[nodo][año+1]);
+                                    
+                                    alumnosXNodo[nodo][año+1] += alumnosXNodo[nodo][año]-aprobados;
+                                    int quedan=alumnosXNodo[nodo][año]-aprobados;
+                                    System.out.println("se quedaron: "+ quedan);
+                                    System.out.println("Despues: "+alumnosXNodo[nodo][año+1]);
                             }
                     }
 
@@ -83,7 +88,7 @@ public class Simulador {
     	
     	for(int nodo = 0; nodo < ROWDIM; nodo++)
 			for(int año = nodo; año < COLDIM; año++){
-				if(nodo == 0)
+				if(nodo == 0 && año==0)
 					alumnosXNodo[nodo][año] = cantAlumnos;
 				else {
 					alumnosXNodo[nodo][año] = 0;

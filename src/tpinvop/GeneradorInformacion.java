@@ -7,8 +7,28 @@ package tpinvop;
 
 /**
  *
- * @author Administrador
+ * @author lucho
  */
 public class GeneradorInformacion {
     
+    Cadena cadena;
+    
+    public GeneradorInformacion(Cadena cadena){
+        this.cadena = cadena;
+    }
+    
+    public static float getPromedioCuatrimestre(int nroNodo){
+        
+        return 0;
+    }
+    
+    public static float getTotalCuatrimestre(){
+        //sumatoria fila 1
+        return 0;
+    }
+    
+    public static float getCriticidad(){
+        
+        return 0;
+    }
 }

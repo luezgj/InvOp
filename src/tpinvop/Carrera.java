@@ -185,6 +185,7 @@ public class Carrera{
             nuevoNodo.ordenar();
             nodoSig = nuevoNodo;
         }
+        l.invertir();
     }
         
     
@@ -211,6 +212,8 @@ public class Carrera{
                 
              } 
         }
+        
+        Collections.reverse(Lineas);
         
         return Lineas;
     }

@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import tpinvop.AdminBD;
 import tpinvop.Cadena;
 import tpinvop.Carrera;
 import tpinvop.Cohorte;
@@ -58,8 +59,6 @@ public class VentanaCSV extends javax.swing.JFrame {
         BotonExaminarCorrelativas = new javax.swing.JButton();
         BotonVolver = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        BotonSimular = new javax.swing.JButton();
-        Año = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2013", "2014", "2015", "2016", "2017", "2018" }));
@@ -105,51 +104,34 @@ public class VentanaCSV extends javax.swing.JFrame {
 
         jLabel2.setText("Selecionar Archivo CSV");
 
-        BotonSimular.setText("Simular");
-        BotonSimular.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BotonSimularActionPerformed(evt);
-            }
-        });
-
-        Año.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2013", "2014", "2015", "2016", "2017", "2018" }));
-        Año.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AñoActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setText("Cohorte:");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(BotonVolver)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Año, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(BotonExaminarCorrelativas))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(BotonExaminarCSV))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(BotonContinuar)
-                        .addGap(18, 18, 18)
-                        .addComponent(BotonSimular, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(BotonVolver)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 24, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel4)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(BotonExaminarCorrelativas))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(BotonExaminarCSV)))
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(BotonContinuar)
+                                .addGap(131, 131, 131))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -162,15 +144,11 @@ public class VentanaCSV extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(BotonExaminarCorrelativas))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Año, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BotonContinuar)
-                    .addComponent(BotonSimular))
-                .addGap(18, 18, 18)
+                .addGap(5, 5, 5)
+                .addComponent(jLabel4)
+                .addGap(56, 56, 56)
+                .addComponent(BotonContinuar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(BotonVolver)
                 .addContainerGap())
         );
@@ -179,14 +157,20 @@ public class VentanaCSV extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BotonContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonContinuarActionPerformed
-        if (pathCorrelativas != null){
-            this.setVisible(false);
-            Carrera IngSist=new Carrera(pathCorrelativas);
-            GeneradorCadena genCadenas = new GeneradorCadena(null);
-           
-            //Falta lo de la base de datos
+        if (pathCorrelativas != null){/*
+            if (pathCSV != null ){
+                AdminBD db = new AdminBD("cursadas","vista");
+       
+                db.connectDatabase();
+                db.createTable();
+                db.loadCSV(pathCSV);
+                db.filterData(206, "2011");
+                */
+                this.setVisible(false);
+                Carrera carrera=new Carrera(pathCorrelativas);
+                GeneradorCadena genCadenas = new GeneradorCadena(null);
             
-            new VentanaResultados(genCadenas.getCadenas(IngSist)).setVisible(true);
+                new VentanaResultados(genCadenas,carrera).setVisible(true);
         }
         else{
             VentanaError vr=new VentanaError();
@@ -262,30 +246,6 @@ public class VentanaCSV extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
-    private void AñoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AñoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_AñoActionPerformed
-
-    private void BotonSimularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonSimularActionPerformed
-        if (pathCorrelativas != null){
-           this.setVisible(false);
-           
-           Carrera IngSist=new Carrera(pathCorrelativas);
-           Map<Integer, Cohorte> cohortes= new HashMap();
-           GeneradorCadena genCadenas = new GeneradorCadena(null);
-       
-           int añoPrimerCohorte = Integer.parseInt (Año.getItemAt(Año.getSelectedIndex()));
-                   
-           for (int año = añoPrimerCohorte;año<=_AÑO_ULTIMA_COHORTE;año++){
-              List<Cadena> cadenas= genCadenas.getCadenas(IngSist,año);
-              Cohorte cohorte= new Cohorte(cadenas, año);
-              cohortes.put(año, cohorte);
-           }
-             //new VentanaResultados(cadenas).setVisible(true);
-            new VentanaSimulacion(cohortes.get(añoPrimerCohorte),1).setVisible(true);
-        }
-    }//GEN-LAST:event_BotonSimularActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -319,11 +279,9 @@ public class VentanaCSV extends javax.swing.JFrame {
     }
 */
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> Año;
     private javax.swing.JButton BotonContinuar;
     private javax.swing.JButton BotonExaminarCSV;
     private javax.swing.JButton BotonExaminarCorrelativas;
-    private javax.swing.JButton BotonSimular;
     private javax.swing.JButton BotonVolver;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;

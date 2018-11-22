@@ -16,7 +16,7 @@ public class GeneradorCadena {
         Cadena c=new Cadena(linea);
         int nroNodo=0;
         for(Nodo n: linea){
-            //c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n,año));
+            c.setProbAprobar(nroNodo, dbAdmin.getPassPercentage(n,año));
             nroNodo++;
         }
         return c;

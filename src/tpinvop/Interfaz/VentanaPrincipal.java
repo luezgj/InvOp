@@ -25,7 +25,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         GrupoBotones.add(Opcion1);
-        GrupoBotones.add(Opcion2);
         GrupoBotones.add(Opcion3);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }

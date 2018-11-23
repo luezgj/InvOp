@@ -85,7 +85,7 @@ public class Nodo implements Iterable<Materia>, Comparable<Nodo>{
             pos++;
         }
     }
-
+    
     @Override
     public int compareTo(Nodo o) {
         return getNombre().compareTo(o.getNombre());

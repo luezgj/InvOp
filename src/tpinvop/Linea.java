@@ -72,6 +72,6 @@ public class Linea implements Iterable<Nodo>{
     
     public List<Nodo>getNodos() {
         return Materias;
-    }
+}
     
 }

@@ -2,20 +2,29 @@ package tpinvop.Interfaz;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
-import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import tpinvop.Materia;
 import tpinvop.Nodo;
 import tpinvop.Cadena;
-import static tpinvop.main._AÑO_PRIMER_COHORTE;
+import tpinvop.Carrera;
+import tpinvop.GeneradorCadena;
+import tpinvop.GeneradorInformacion;
 
 public class VentanaResultados extends javax.swing.JFrame {
 
     private mxGraph graph;
     private mxGraphComponent graphComponent;
-    final static private int DISTANCIAX_ENTRE_BLOQUES = 250;
+    final static private int DISTANCIAX_ENTRE_BLOQUES = 280;
     final static private int DISTANCIAY_ENTRE_BLOQUES = 150;
     final static private int ANCHO_BLOQUE = 220;
     final static private int ALTO_BLOQUE = 100;   
@@ -25,25 +34,64 @@ public class VentanaResultados extends javax.swing.JFrame {
     final static private int ANCHO_BLOQUE_CHICO = 50;
     final static private int ALTO_BLOQUE_CHICO = 20;   
     
-    Object parent;
+    JPanel panelArriba;
+    JComboBox<String> Año;
+    GeneradorCadena generadorCadena;
+    GeneradorInformacion generadorInformacion;
     
-    public VentanaResultados(List<Cadena> cadenas) {
+    Object parent;
+ 
+    public VentanaResultados(GeneradorCadena genCadenas,Carrera carrera) {
         super("Cadenas");
         setSize(800,600);
         this.setLocationRelativeTo(null);
-        crearCadenas(cadenas);
+        getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+        
+        panelArriba = new JPanel();
+        editarPanelArriba();
+        
+        JTextArea textArea = new JTextArea(10, 5);
+        textArea.setEditable(false);
+        
+        add(panelArriba);
+        add(textArea);
+        crearCadenas(genCadenas.getCadenas(carrera));
+        
+        Año.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                        getContentPane().remove(2);
+                        crearCadenas(genCadenas.getCadenas(carrera,Integer.parseInt((String)Año.getSelectedItem()) ));
+                        //textArea.setText();
+                }
+        });
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    
+    private void editarPanelArriba(){
+        JButton botonSimular = new JButton("Simular");
+        Año = new JComboBox();
+        JLabel label = new JLabel("Cohote");
+        Año.addItem("2013");
+        Año.addItem("2014");
+        Año.addItem("2015");
+        Año.addItem("2016");
+        Año.addItem("2017");
+        Año.addItem("2018");
+        panelArriba.add(label);
+        panelArriba.add(Año);
+        panelArriba.add(botonSimular);
     }
 
     void crearCadenas(List<Cadena> cadenas){
-        graph = new mxGraph();
-        
+        graph = new mxGraph(); 
+        parent = graph.getDefaultParent(); 
         graph.getModel().beginUpdate();
         
         parent = graph.getDefaultParent();
         try{
             int distanciaYEntreBloques = 5;
-
             for (Cadena c : cadenas){
                 crearVertices(c,distanciaYEntreBloques);
                 distanciaYEntreBloques+=DISTANCIAY_ENTRE_BLOQUES;
@@ -53,8 +101,7 @@ public class VentanaResultados extends javax.swing.JFrame {
 	}
         
         graphComponent = new mxGraphComponent(graph);
-        getContentPane().add(graphComponent);
-        
+        add(graphComponent);
     }
     
     void crearVertices(Cadena c,int posY){
@@ -64,7 +111,7 @@ public class VentanaResultados extends javax.swing.JFrame {
 
         Iterator<Nodo> itLinea = c.getLinea().iterator();
         int posX=5;
-        
+        int i=0;
         while ( itLinea.hasNext()){
             Nodo nodo=itLinea.next();
             Iterator<Materia> itMaterias = nodo.iterator();
@@ -76,15 +123,16 @@ public class VentanaResultados extends javax.swing.JFrame {
                 graph.insertVertex(v2,null,m.getNombre(),posXchico,posYchico,ANCHO_BLOQUE,ALTO_BLOQUE_CHICO);
                 posYchico+=DISTANCIAY_ENTRE_BLOQUES_CHICOS;
             }
-            graph.foldCells(true, true, new Object[]{v2});
+            graph.foldCells(false, true, new Object[]{v2});
             
             if (!primerNodo)
                 //              (parent, null, ACA VA LA PROBABILIDAD, v1, v2);
-                graph.insertEdge(parent, null, "", v1, v2);
+                graph.insertEdge(parent, null,c.getProbAprobar(i) , v1, v2);
             else
                 primerNodo=false;
             v1 = v2;
             posX+=DISTANCIAX_ENTRE_BLOQUES;
+            i++;
 
         }
     }
@@ -93,78 +141,43 @@ public class VentanaResultados extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        jPanel1 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        jScrollPane2.setViewportView(jTextPane1);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 323, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 382, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                .addGap(216, 216, 216)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(44, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 416, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(53, 53, 53)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    
-    //public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        //try {
-            /*
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }*/
-            /*javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaResultados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }*/
-        //</editor-fold>
-
-        /* Create and display the form */
-        /*java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaResultados().setVisible(true);
-            }
-        });
-    }*/
-    
-    public void setTextPan(String contenido){
-        jTextPane1.setText( contenido );
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

@@ -12,10 +12,12 @@ package tpinvop;
 public class Cadena {
     private Linea l;
     private float[] prob;
+    private float[][] matrizN;
 
     public Cadena(Linea l) {
         this.l = l;
         prob= new float[l.getCantMaterias()];
+        matrizN = new float[l.getCantMaterias()][l.getCantMaterias()];
     }
     
     public boolean setProbAprobar(int nroNodo, float probabilidad){
@@ -42,5 +44,14 @@ public class Cadena {
             return 1-prob[nroNodo];
         }
         return -1;
+    }
+    
+    public void setMatriz(){
+        for (int i=0; i < matrizN.length;i++)
+            for (int j=0 ; j < matrizN.length; j++)
+                matrizN[i][j] = 0;
+        for (int i=0; i < matrizN.length ;i++){
+            matrizN[i][i] = 1-prob[i];
+        }
     }
 }

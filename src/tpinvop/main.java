@@ -10,6 +10,7 @@ import tpinvop.Interfaz.VentanaSimulacion;
 public class main {
     public static final int _AÑO_PRIMER_COHORTE=2012;
     public static final int _AÑO_ULTIMA_COHORTE=2012;
+    
     public static void main(String[] args) {
         Carrera IngSist=new Carrera("recursos/Correlatividades.txt");
 

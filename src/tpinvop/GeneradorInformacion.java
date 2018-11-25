@@ -34,19 +34,21 @@ public class GeneradorInformacion {
         return 0;
     }
     
-    public static float tiempoEsperadoRama(Cadena cadena){
-        System.out.println("asd");
+    public static double tiempoEsperadoRama(Cadena cadena){
         float [][] matrizN = cadena.getMatrizN();
         restarMatrizConI(matrizN);
-        float [][] matrizResultante = matrizN;
-        mostrarMatriz(matrizN);
+        float [][] matrizResultante = matrizInversa(matrizN);
+        //mostrarMatriz(matrizN);
         
-        float suma = 3;
+        float suma = 0;
         for (int i=0 ; i < matrizResultante.length ; i++){
-            System.out. print(matrizResultante[0][i] + "  ");
+         //   System.out. print(matrizResultante[0][i] + "  ");
+         //   System.out.println("");
+            System.out.println(matrizResultante[0][i]+"/"+cadena.getLinea().getDifCuatrimestre(i));
             suma += matrizResultante[0][i]/cadena.getLinea().getDifCuatrimestre(i);
         }
-        
+        //System.out.println("");
+        //System.out.println(suma);
         return suma;
     }
     
@@ -59,12 +61,14 @@ public class GeneradorInformacion {
     }
     
     private static void restarMatrizConI(float[][] matrizN) {
-        for (int i=0; i < matrizN.length; i++)
-            for (int j=0 ; j < matrizN.length ; j++)
-                if (i==j)
-                    matrizN[i][j] = 1 - matrizN[i][j];
-                else
-                    matrizN[i][j] = -matrizN[i][j];
+        for (int i=0; i < matrizN.length; i++){
+            if (i == matrizN.length-1){
+                matrizN[i][i] = 1 - matrizN[i][i];
+            } else{
+                matrizN[i][i] = 1-matrizN[i][i];
+                matrizN[i][i+1] = -matrizN[i][i+1];
+            }
+        }
     }
     
     private static float[][] matrizInversa(float[][] matriz) {

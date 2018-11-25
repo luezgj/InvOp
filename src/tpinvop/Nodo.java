@@ -38,16 +38,18 @@ public class Nodo implements Iterable<Materia>, Comparable<Nodo>{
             return nombre.toString();
         }
     }
+
+    public void setDifCuatrimestres(int DifCuatrimestres) {
+        this.DifCuatrimestres = DifCuatrimestres;
+    }
     
-    public boolean setDifCuatrimestres(){
+    public void setDifCuatrimestres(){
         for (Materia m : Materias)
             for (Materia m2 : Materias)
                 if (!m.equals(m2))
                     if (m.getAnio()!=m2.getAnio() || m.getCuatrimestre()!= m2.getCuatrimestre()){
                         DifCuatrimestres = 2;
-                        return true;
                     }
-        return false;
     }
 
     public int getDifCuatrimestres() {

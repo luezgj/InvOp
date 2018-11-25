@@ -75,6 +75,7 @@ public class Linea implements Iterable<Nodo>{
         for (Nodo nodo : Materias){
             if (cont == nroNodo)
                 return nodo.getDifCuatrimestres();
+            cont++;
         }
         return 0;
     }

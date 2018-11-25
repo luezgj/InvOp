@@ -12,6 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import tpinvop.Materia;
 import tpinvop.Nodo;
@@ -54,16 +55,20 @@ public class VentanaResultados extends javax.swing.JFrame {
         panelArriba = new JPanel();
         editarPanelArriba();
         
-        JTextArea textArea = new JTextArea(10, 5);
+        JTextArea textArea = new JTextArea(20, 25);
+        JScrollPane sp = new JScrollPane(textArea);
         textArea.setEditable(false);
         
         add(panelArriba);
-        add(textArea);
+        add(sp);
         añoSeleccionado = Integer.parseInt((String)Año.getSelectedItem());
         List<Cadena> cadenas= genCadenas.getCadenas(carrera,añoSeleccionado);
         crearCadenas(cadenas);
+        int nroCadena = 1;
+        textArea.append("Tiempo Total"+"\n"+"\n");
         for (Cadena c : cadenas){
-            textArea.append(GeneradorInformacion.tiempoEsperadoRama(c)+"\n");
+            textArea.append("Cadena "+nroCadena+": "+GeneradorInformacion.tiempoEsperadoRama(c)+"\n");
+            nroCadena++;
         }
         
         Año.addActionListener(new ActionListener() {

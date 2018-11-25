@@ -51,7 +51,7 @@ public class Cadena {
             for (int j=0 ; j < matrizN.length; j++)
                 matrizN[i][j] = 0;
         for (int i=0; i < matrizN.length ;i++){
-            if (i == matrizN.length){
+            if (i == matrizN.length-1){
                 matrizN[i][i] = 1-prob[i];
             } else{
                 matrizN[i][i] = 1-prob[i];

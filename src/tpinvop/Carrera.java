@@ -214,8 +214,6 @@ public class Carrera{
              } 
         }
         
-        Collections.reverse(Lineas);
-        
         return Lineas;
     }
     

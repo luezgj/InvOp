@@ -17,6 +17,7 @@ import tpinvop.Materia;
 import tpinvop.Nodo;
 import tpinvop.Cadena;
 import tpinvop.Carrera;
+import tpinvop.Cohorte;
 import tpinvop.GeneradorCadena;
 import tpinvop.GeneradorInformacion;
 
@@ -38,6 +39,9 @@ public class VentanaResultados extends javax.swing.JFrame {
     JComboBox<String> Año;
     GeneradorCadena generadorCadena;
     GeneradorInformacion generadorInformacion;
+    JButton botonSimular;
+    
+    int añoSeleccionado;
     
     Object parent;
  
@@ -55,24 +59,42 @@ public class VentanaResultados extends javax.swing.JFrame {
         
         add(panelArriba);
         add(textArea);
-        crearCadenas(genCadenas.getCadenas(carrera));
+        añoSeleccionado = Integer.parseInt((String)Año.getSelectedItem());
+        List<Cadena> cadenas= genCadenas.getCadenas(carrera,añoSeleccionado);
+        crearCadenas(cadenas);
+        for (Cadena c : cadenas){
+            textArea.append(GeneradorInformacion.tiempoEsperadoRama(c)+"\n");
+        }
         
         Año.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                         getContentPane().remove(2);
-                        crearCadenas(genCadenas.getCadenas(carrera,Integer.parseInt((String)Año.getSelectedItem()) ));
-                        //textArea.setText();
+                        añoSeleccionado = Integer.parseInt((String)Año.getSelectedItem());
+                        crearCadenas(genCadenas.getCadenas(carrera,añoSeleccionado));
+                        textArea.setText("");
+                        for (Cadena c : cadenas)
+                            textArea.append(GeneradorInformacion.tiempoEsperadoRama(c)+"\n");
                 }
+        });
+        
+        botonSimular.addActionListener( new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                Cohorte cohorte= new Cohorte(cadenas, añoSeleccionado);
+                new VentanaSimulacion(cohorte,añoSeleccionado).setVisible(true);
+            }
         });
         
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     private void editarPanelArriba(){
-        JButton botonSimular = new JButton("Simular");
+        botonSimular = new JButton("Simular");
         Año = new JComboBox();
         JLabel label = new JLabel("Cohote");
+        Año.addItem("2011");
+        Año.addItem("2012");
         Año.addItem("2013");
         Año.addItem("2014");
         Año.addItem("2015");

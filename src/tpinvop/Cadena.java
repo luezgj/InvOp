@@ -51,7 +51,18 @@ public class Cadena {
             for (int j=0 ; j < matrizN.length; j++)
                 matrizN[i][j] = 0;
         for (int i=0; i < matrizN.length ;i++){
-            matrizN[i][i] = 1-prob[i];
+            if (i == matrizN.length){
+                matrizN[i][i] = 1-prob[i];
+            } else{
+                matrizN[i][i] = 1-prob[i];
+                matrizN[i][i+1] = prob[i];
+            }
         }
     }
+
+    public float[][] getMatrizN() {
+        return matrizN;
+    }
+    
+    
 }

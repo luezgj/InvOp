@@ -5,13 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
 
-public class Nodo implements Iterable<Materia> {
+public class Nodo implements Iterable<Materia>, Comparable<Nodo>{
     List<Materia> Materias;
+    int DifCuatrimestres;
     boolean sorted;
     
     public Nodo(){ 
         Materias= new ArrayList<>();
         sorted=false;
+        DifCuatrimestres = 1;
     }
     
     public void add(Materia m){
@@ -35,6 +37,21 @@ public class Nodo implements Iterable<Materia> {
 
             return nombre.toString();
         }
+    }
+    
+    public boolean setDifCuatrimestres(){
+        for (Materia m : Materias)
+            for (Materia m2 : Materias)
+                if (!m.equals(m2))
+                    if (m.getAnio()!=m2.getAnio() || m.getCuatrimestre()!= m2.getCuatrimestre()){
+                        DifCuatrimestres = 2;
+                        return true;
+                    }
+        return false;
+    }
+
+    public int getDifCuatrimestres() {
+        return DifCuatrimestres;
     }
     
     @Override
@@ -84,6 +101,15 @@ public class Nodo implements Iterable<Materia> {
                 Materias.remove(pos);
             pos++;
         }
+    }
+
+    @Override
+    public int compareTo(Nodo o) {
+        return getNombre().compareTo(o.getNombre());
+    }
+    
+    public boolean equals (Nodo o){
+        return this.compareTo(o)==0;
     }
     
     protected class IteratorMateria implements Iterator<Materia>

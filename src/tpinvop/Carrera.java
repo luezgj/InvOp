@@ -81,7 +81,7 @@ public class Carrera{
     //Formato? : [CodMateria\tab\NomMateria\tab\{Correlativas\,\}]
     private void getInfoMateria(String linea,List<Materia> Materias){
         //String lineaMod = "	" + linea;
-        String [] partes = linea.split("    ");
+        String [] partes = linea.split(";");
        
         int cod=Integer.parseInt(partes[0].trim());
         String nombre=new String(partes[1].trim());
@@ -185,6 +185,7 @@ public class Carrera{
             nuevoNodo.ordenar();
             nodoSig = nuevoNodo;
         }
+        l.setDifCuatrimestresNodos();
         l.invertir();
     }
         
@@ -225,7 +226,13 @@ public class Carrera{
     //Devuelve el conjunto(sin repeticiones) de nodos que contiene la carrera
     public List<Nodo> getNodos(){
         List<Nodo> outNodos= new LinkedList<>();
-        
+        for (Linea linea: Lineas){
+            for(Nodo nodo: linea.getNodos()){
+                if(nodo.getCantMaterias()!=1 && !outNodos.contains(nodo)){
+                    outNodos.add(nodo);
+                }
+            }
+        } 
         return outNodos;
     }
 

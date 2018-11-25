@@ -7,8 +7,11 @@ package tpinvop.Interfaz;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
@@ -46,11 +49,14 @@ public class VentanaSimulacion extends javax.swing.JFrame {
         initComponents();
         
         setSize(800,600);
+        this.setLocationRelativeTo(null);
         
         simulador= new Simulador(cohorte.getCadenas(),alumnosInicio);
         
         grafoCreado=new boolean[cohorte.getCadenas().size()];
         this.añoInicio=añoInicio;
+        
+        getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
         
         int i=1;
         for (Cadena cadena: cohorte.getCadenas()){
@@ -68,7 +74,6 @@ public class VentanaSimulacion extends javax.swing.JFrame {
             
             i++;
         }
-        
         mostrarSimulacion(graphs.get(0), 0, cohorte.getCadenas());
         
         tabs.addChangeListener(new ChangeListener() {
@@ -84,6 +89,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     private void mostrarSimulacion(mxGraph graph,int nLinea,List<Cadena> cadenas){
         if (!grafoCreado[nLinea]){
             grafoCreado[nLinea]=true;
+            System.out.println("Llamo a simular");
             simulador.simular(nLinea);
             graph.getModel().beginUpdate();
             System.out.println(cadenas.get(nLinea).getLinea().getCantMaterias());
@@ -94,20 +100,20 @@ public class VentanaSimulacion extends javax.swing.JFrame {
             for (int añoRelativo=0;añoRelativo<CANTIDAD_AÑOS;añoRelativo++){
                 posY=15;
                 primero=true;
-                for(int nodo=añoRelativo+1;nodo>0;nodo--){
-                    if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()){
+                for(int nodo=añoRelativo;nodo>=0;nodo--){
+                    if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()-1){
                         int añoActual=añoInicio+añoRelativo;
                         String textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nodo, añoRelativo);
                         vertice = graph.insertVertex(parent,null,textoVertice,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
                         verticesAnteriores.add(vertice);
 
                         if (primero && añoRelativo!=0 && añoRelativo+1<=cadenas.get(nLinea).getLinea().getCantMaterias()){
-                            graph.insertEdge(parent, null, simulador.getAprobados(nodo, añoRelativo), verticesAnteriores.get(0), vertice);
+                            graph.insertEdge(parent, null, simulador.getAprobados(nodo-1, añoRelativo-1), verticesAnteriores.get(0), vertice);
                             primero=false;
                         }else if (añoRelativo!=0){
-                            graph.insertEdge(parent, null, simulador.getAprobados(nodo, añoRelativo), verticesAnteriores.get(0), vertice);
-                            if (nodo!=1)
-                                graph.insertEdge(parent, null, simulador.getDesaprobados(nodo, añoRelativo), verticesAnteriores.get(1), vertice);
+                            graph.insertEdge(parent, null, simulador.getDesaprobados(nodo, añoRelativo-1), verticesAnteriores.get(0), vertice);
+                            if (nodo!=0)
+                                graph.insertEdge(parent, null, simulador.getAprobados(nodo-1, añoRelativo-1), verticesAnteriores.get(1), vertice);
                             verticesAnteriores.remove(0);
                         }
                     }
@@ -131,7 +137,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
 
         tabs = new javax.swing.JTabbedPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Simulación");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

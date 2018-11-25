@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Linea implements Iterable<Nodo>{
     int id;
-    List<Nodo> Materias;
+    private List<Nodo> Materias;
     
     public Linea(int id){
         this.id=id;
@@ -65,9 +65,27 @@ public class Linea implements Iterable<Nodo>{
         Collections.reverse(Materias);
     }
     
+    public void setDifCuatrimestresNodos(){
+        for (Nodo n : Materias)
+            n.setDifCuatrimestres();
+    }
+    
+    public int getDifCuatrimestre(int nroNodo){
+        int cont = 0;
+        for (Nodo nodo : Materias){
+            if (cont == nroNodo)
+                return nodo.getDifCuatrimestres();
+        }
+        return 0;
+    }
+    
     @Override
     public Iterator<Nodo> iterator() {
         return Materias.iterator();
+    }
+    
+    public List<Nodo>getNodos() {
+        return Materias;
     }
     
 }

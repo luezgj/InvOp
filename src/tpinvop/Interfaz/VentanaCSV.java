@@ -24,9 +24,6 @@ import tpinvop.GeneradorCadena;
  */
 public class VentanaCSV extends javax.swing.JFrame {
 
-    /**
-     * Creates new form VentanaCSV
-     */
     VentanaPrincipal vp;
     JFileChooser abrirArchivo;
     String pathCorrelativas;

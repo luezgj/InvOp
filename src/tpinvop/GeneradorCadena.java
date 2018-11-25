@@ -32,7 +32,7 @@ public class GeneradorCadena {
         return cadenas;
     }
     
-    public List<Cadena> getCadenas(Carrera carrera, int año){
+    public List<Cadena> getCadenas(Carrera carrera, Integer año){
         List<Linea> lineas=carrera.getLineas();
         List<Cadena> cadenas=new LinkedList<>();
         for(Linea l:lineas){

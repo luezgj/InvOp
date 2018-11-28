@@ -29,12 +29,12 @@ public class GeneradorInformacion {
         return 0;
     }
     
-    public static float getCriticidad(){
+    public static float getCriticidad(Cadena c, Linea l){
         
-        return 0;
+        return tiempoEsperadoRama(c)/l.getCantMaterias();
     }
     
-    public static double tiempoEsperadoRama(Cadena cadena){
+    public static float tiempoEsperadoRama(Cadena cadena){
         float [][] matrizN = cadena.getMatrizN();
         restarMatrizConI(matrizN);
         float [][] matrizResultante = matrizInversa(matrizN);
@@ -81,7 +81,7 @@ public class GeneradorInformacion {
     private static void multiplicarMatriz(float n, float[][] matriz) {
         for(int i=0;i<matriz.length;i++)
             for(int j=0;j<matriz.length;j++)
-                matriz[i][j]*=n;
+                matriz[i][j]*=n;                
     }
     
     private static float[][] matrizAdjunta(float [][] matriz){

@@ -24,55 +24,21 @@ import org.postgresql.copy.CopyManager;
 public class AdminBD {
     
     Connection con;
+    boolean truncate;
     String generalTable;
     String studentsTable;
     String generalPassTable;
     Map<Integer,String> cohortPassTables= new HashMap<>();
     Map<Integer,String> cohortTables= new HashMap<>();
             
-    public AdminBD(String tableName, String viewName, String studentsTable) {
+    public AdminBD(String tableName, String viewName, String studentsTable, boolean truncate) {
         this.generalTable = tableName;
         this.studentsTable = studentsTable;
         this.generalPassTable = viewName;
+        this.truncate = truncate;           //Este valor luego es utilizado para borrar todas las tablas
     }
     
-    
-    
-    /*
-    public Connection connectDatabase() {
-        
-        Connection connection = null;
-        
-        try {
-            
-            //***************GENERALIZAR LA CONEXION****************************
-            
-            // We register the PostgreSQL driver
-            // Registramos el driver de PostgresSQL
-            try { 
-                Class.forName("org.postgresql.Driver");
-            } catch (ClassNotFoundException ex) {
-                InfoMsgBox.errBox("Error al registrar el driver de PostgreSQL: " + ex.getMessage(),
-                        "Error");
-            }
-            
-            // Database connect
-            // Create user:
-            // sudo -u postgres psql postgres
-            // create user invop with password '12345';
-            // Conectamos con la base de datos
-            this.con = DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/invopdb",
-                    "invop", "12345");
-            
-        } catch (java.sql.SQLException sqle) {
-                InfoMsgBox.errBox("COD "+sqle.getErrorCode()+
-                                ") "+sqle.getMessage(), "Error de SQL");
-        }
-        
-    }
-    
-    */
+    //Connect to database and gets the current tables, if truncate is true drops all
     public void connectDatabase() {
         try {
             try { 
@@ -83,6 +49,12 @@ public class AdminBD {
             String urlDatabase =  "jdbc:postgresql://localhost:5432/invopdb"; 
             con = DriverManager.getConnection(urlDatabase,  "invop", "12345");
             System.out.println("Conectado");
+            
+            if(!truncate)
+                this.updateTableList();
+            else
+                this.dropTables();
+           
             } 
         catch (java.sql.SQLException sqle) {
             InfoMsgBox.errBox(sqle.getMessage(), "Error!");
@@ -90,65 +62,80 @@ public class AdminBD {
         
     }
     
+    //Gets all data from csv files and puts in the database, then applies the filtering
+    public void getData(String pathCoursed, String pathStudents, int cod, String plan){
+        
+        createCoursedTable();
+        createStudentsTable();
+        loadCoursedCSV(pathCoursed);
+        loadStudentsCSV(pathStudents);
+        filterCoursedData(cod, plan);
+        filterStudentsData(cod);
+    }
+    
     public void createCoursedTable(){  // Creates a table with the specified name
         
-        // Sql statement for creating the base table
-        
-        String sql = "CREATE TABLE IF NOT EXISTS "+ generalTable  +
-                "( nro_entrada bigint PRIMARY KEY, "
-                + "carrera varchar,"
-                + "plan varchar(4),"
-                + "legajo int,"
-                + "materia int,"
-                + "fecha_regularidad date,"
-                + "resultado char(1),"
-                + "nota numeric(4,2),"
-                + "origen varchar,"
-                + "nombre varchar);";
-        
-        Statement stmt;
-        
-        // Executing SQL statement through DBMS 
-        try{
-            
-            stmt = con.createStatement();
-            stmt.executeUpdate(sql);
-            System.out.println("Tabla cursadas creada correctamente");
-            
+        if(!existsTable(generalTable)){
+            // Sql statement for creating the base table
+            String sql = "CREATE TABLE IF NOT EXISTS "+ generalTable  +
+                    "( nro_entrada bigint PRIMARY KEY, "
+                    + "carrera varchar,"
+                    + "plan varchar(4),"
+                    + "legajo int,"
+                    + "materia int,"
+                    + "fecha_regularidad date,"
+                    + "resultado char(1),"
+                    + "nota numeric(4,2),"
+                    + "origen varchar,"
+                    + "nombre varchar);";
+
+            Statement stmt;
+
+            // Executing SQL statement through DBMS 
+            try{
+
+                stmt = con.createStatement();
+                stmt.executeUpdate(sql);
+                System.out.println("Tabla cursadas creada correctamente");
+
+            }
+            catch(SQLException sqle){
+                InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+                System.out.println("ERROR2");
+            }
         }
-        catch(SQLException sqle){
-            InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
-            System.out.println("ERROR2");
-        }
-        
+        else
+            System.out.println("La tabla ya existe");
     }
     
     public void createStudentsTable(){  // Creates a table with the specified name
         
-        // Sql statement for creating the base table
-        
-        String sql = "CREATE TABLE IF NOT EXISTS "+ studentsTable  +
-                "(carrera int,"
-                + "legajo int,"
-                + "fecha_ingreso date);"
-                + "ALTER TABLE " + studentsTable + " ADD CONSTRAINT PK_" + studentsTable
-                + " PRIMARY KEY (legajo, carrera)";
-        
-        Statement stmt;
-        
-        // Executing SQL statement through DBMS 
-        try{
-            
-            stmt = con.createStatement();
-            stmt.executeUpdate(sql);
-            System.out.println("Tabla alumnos creada correctamente");
-            
+        if(!existsTable(studentsTable)){
+            // Sql statement for creating the base table
+            String sql = "CREATE TABLE IF NOT EXISTS "+ studentsTable  +
+                    "(carrera int,"
+                    + "legajo int,"
+                    + "fecha_ingreso date);"
+                    + "ALTER TABLE " + studentsTable + " ADD CONSTRAINT PK_" + studentsTable
+                    + " PRIMARY KEY (legajo, carrera)";
+
+            Statement stmt;
+
+            // Executing SQL statement through DBMS 
+            try{
+
+                stmt = con.createStatement();
+                stmt.executeUpdate(sql);
+                System.out.println("Tabla alumnos creada correctamente");
+
+            }
+            catch(SQLException sqle){
+                InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+                System.out.println("ERROR3");
+            }
         }
-        catch(SQLException sqle){
-            InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
-            System.out.println("ERROR3");
-        }
-        
+        else
+            System.out.println("La tabla ya existe");
     }
     
     //Creates a database with the specified name
@@ -175,6 +162,67 @@ public class AdminBD {
         catch(SQLException sqle){
             InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
         }
+    }
+    
+    private void updateTableList(){
+         List<String> l = this.getTableNames();
+
+         for(String s : l)
+            if(s.startsWith("cohorte"))
+                this.cohortTables.put(Integer.parseInt(s.substring(7)), s);
+            else if (s.startsWith("pass"))
+                this.cohortPassTables.put(Integer.parseInt(s.substring(4)), s);
+    }
+    
+    //Drop all tables in the database
+    public void dropTables(){
+        
+        List<String> l = this.getTableNames();
+        
+        for(String s : l)
+            dropTable(s);
+        
+        this.cohortPassTables.clear();
+        this.cohortTables.clear();
+        
+        System.out.println("Base de datos vaciada correctamente.");
+
+    }
+    
+    //Deletes a table, if exists, from the database
+    public void dropTable(String tableName){
+        
+        try{
+            Statement st = con.createStatement();
+            if(this.existsTable(tableName) && this.existsTableName(tableName)){
+                st.execute("DROP TABLE "+tableName);
+                System.out.println("Borrada la tabla: " + tableName);
+            }
+            else
+                InfoMsgBox.infoBox("La tabla no existe", "Advertencia");
+        } catch(SQLException sqle){
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
+        }
+    }
+    
+    //Obtains all table names in the current database
+    private List<String> getTableNames(){
+        try{
+            DatabaseMetaData m = con.getMetaData();
+            ResultSet tables = m.getTables(con.getCatalog(), con.getSchema(), "%", null);
+            LinkedList<String> result = new LinkedList();
+            
+            while(tables.next()){
+                result.add(tables.getString(3));
+            }
+            
+            return result;
+            
+        } catch(SQLException sqle){
+            InfoMsgBox.errBox(sqle.getMessage(), "Error de DBMS");
+        }
+        
+        return null;
     }
     
     //Loads a CSV file into the DB
@@ -457,20 +505,23 @@ public class AdminBD {
     
     //public method for constructing the data view
     public void generatePassTable(List<Nodo> l, Integer añoCohorte){
-        System.out.println("");
-        System.out.println("generatePassTable: "+ añoCohorte);
-        System.out.println("");
-        System.out.println("LLAMO A FILTERCOHORT");
-        String origen=this.filterCohort(añoCohorte);
-        String destino=creationPassTable(añoCohorte);
-        System.out.println("LLAMO A GENERATEPASSPERSUBJECT");
-        this.generatePassPerSubject(origen,destino);
-        System.out.println("LLAMO A GENERATEPASSPERNODE");
-        System.out.println("cantidad nodos: "+l.size());
-        this.generatePassPerNode(l,origen,destino);
+
+        if(existsTable("pass"+añoCohorte)){
+            System.out.println("");
+            System.out.println("generatePassTable: "+ añoCohorte);
+            System.out.println("");
+            System.out.println("LLAMO A FILTERCOHORT");
+            String origen=this.filterCohort(añoCohorte);
+            String destino=creationPassTable(añoCohorte);
+            System.out.println("LLAMO A GENERATEPASSPERSUBJECT");
+            this.generatePassPerSubject(origen,destino);
+            System.out.println("LLAMO A GENERATEPASSPERNODE");
+            System.out.println("cantidad nodos: "+l.size());
+            this.generatePassPerNode(l,origen,destino);
+        }
     }
 
-    //Return pass pergentage of a node considering only the cohort year=año // año== null dont consider cohort
+    //Return pass percentage of a node considering only the cohort year=año // año== null dont consider cohort
     public float getPassPercentage(Nodo n, Integer añoCohorte){
         String tableUsed=getPassTable(añoCohorte);
         System.out.println("Saco porcentaje del nodo: "+n.getNombre()+"- año: "+añoCohorte+"- Tabla:"+tableUsed);
@@ -537,4 +588,24 @@ public class AdminBD {
         }
     }
     
+    //Returns true only if the name is in any of the structures of this object 
+    private boolean existsTableName(String name){
+        return(this.generalPassTable.equals(name) || this.generalTable.equals(name) || this.studentsTable.equals(name) ||
+                this.cohortPassTables.containsValue(name) || this.cohortTables.containsValue(name));
+    }
+    
+    //Returns true only of the table exists in the database
+    private boolean existsTable(String name){
+        List<String> l = this.getTableNames();
+        
+        for(String s : l)
+            if(s.equals(name))
+                return true;
+        
+        return false;
+    }
+ 
+    public void setTruncate(boolean value){
+        this.truncate = value;
+    }
 }

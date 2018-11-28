@@ -52,8 +52,10 @@ public class AdminBD {
             
             if(!truncate)
                 this.updateTableList();
-            else
+            else{
                 this.dropTables();
+                this.truncate = false;
+            }
            
             } 
         catch (java.sql.SQLException sqle) {

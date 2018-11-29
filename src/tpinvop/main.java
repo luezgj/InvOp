@@ -14,16 +14,16 @@ public class main {
         
         Carrera IngSist=new Carrera("recursos/Correlatividades.txt");
 
-        AdminBD db = new AdminBD("cursadas","vista","alumnos", true);
+        AdminBD db = new AdminBD("cursadas","vista","alumnos", false);
 
 
         db.connectDatabase();
-        db.getData("./recursos/cursadas.csv", "./recursos/alumnosbien.csv", 206, "2011");
+        //db.getData("./recursos/cursadas.csv", "./recursos/alumnosbien.csv", 206, "2011");
 
-        //db.generatePassTable(IngSist.getNodos(), 2012);
+        db.generatePassTable(IngSist.getNodos(), 2012);
 
-        //Map<Integer, Cohorte> cohortes= new HashMap();
-        //GeneradorCadena genCadenas = new GeneradorCadena(db);
+        Map<Integer, Cohorte> cohortes= new HashMap();
+        GeneradorCadena genCadenas = new GeneradorCadena(db);
 
         /*for (int año=_AÑO_PRIMER_COHORTE;año<=_AÑO_ULTIMA_COHORTE;año++){
          db.generatePassTable(IngSist.getNodos(), año);

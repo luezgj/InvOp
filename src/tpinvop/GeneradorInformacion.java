@@ -19,36 +19,21 @@ public class GeneradorInformacion {
         this.cadena = cadena;
     }
     
-    public static float getPromedioCuatrimestre(int nroNodo){
-        
-        return 0;
-    }
-    
-    public static float getTotalCuatrimestre(){
-        //sumatoria fila 1
-        return 0;
-    }
-    
     public static float getCriticidad(Cadena c, Linea l){
         
         return tiempoEsperadoRama(c)/l.getCantMaterias();
     }
     
     public static float tiempoEsperadoRama(Cadena cadena){
+        cadena.setMatriz();
         float [][] matrizN = cadena.getMatrizN();
         restarMatrizConI(matrizN);
         float [][] matrizResultante = matrizInversa(matrizN);
-        //mostrarMatriz(matrizN);
         
         float suma = 0;
         for (int i=0 ; i < matrizResultante.length ; i++){
-         //   System.out. print(matrizResultante[0][i] + "  ");
-         //   System.out.println("");
-            System.out.println(matrizResultante[0][i]+"/"+cadena.getLinea().getDifCuatrimestre(i));
             suma += matrizResultante[0][i]/cadena.getLinea().getDifCuatrimestre(i);
         }
-        //System.out.println("");
-        //System.out.println(suma);
         return suma;
     }
     
@@ -73,7 +58,9 @@ public class GeneradorInformacion {
     
     private static float[][] matrizInversa(float[][] matriz) {
         float det=1/determinante(matriz);
-        float[][] nmatriz=matrizAdjunta(matriz);
+        float[][] nmatriz;
+        nmatriz=matrizAdjunta(matriz);
+        mostrarMatriz(nmatriz);
         multiplicarMatriz(det,nmatriz);
         return nmatriz;
     }
@@ -85,6 +72,10 @@ public class GeneradorInformacion {
     }
     
     private static float[][] matrizAdjunta(float [][] matriz){
+        if (matriz.length == 1){
+            matriz[0][0]=1;
+            return matriz;
+        }
         return matrizTranspuesta(matrizCofactores(matriz));
     }
     
@@ -115,6 +106,7 @@ public class GeneradorInformacion {
                     }
                 }
                 detValor=determinante(det);
+                System.out.println("Valor de Det:"+ detValor);
                 nm[i][j]=detValor * (float)Math.pow(-1, i+j+2);
             }
         }
@@ -123,6 +115,9 @@ public class GeneradorInformacion {
     
     private static float determinante(float[][] matriz){
         float det;
+        if (matriz.length==1){
+            return matriz[0][0];
+        }
         if(matriz.length==2){
             det=(matriz[0][0]*matriz[1][1])-(matriz[1][0]*matriz[0][1]);
             return det;

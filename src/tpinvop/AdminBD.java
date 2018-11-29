@@ -50,11 +50,12 @@ public class AdminBD {
             con = DriverManager.getConnection(urlDatabase,  "invop", "12345");
             System.out.println("Conectado");
             
-            if(!truncate)
+            if(!truncate){
                 this.updateTableList();
+                System.out.println("Cargada lista de tablas satisfactoriamente");
+            }
             else{
                 this.dropTables();
-                this.truncate = false;
             }
            
             } 
@@ -508,7 +509,7 @@ public class AdminBD {
     //public method for constructing the data view
     public void generatePassTable(List<Nodo> l, Integer añoCohorte){
 
-        if(existsTable("pass"+añoCohorte)){
+        if(!existsTable("pass"+añoCohorte)){
             System.out.println("");
             System.out.println("generatePassTable: "+ añoCohorte);
             System.out.println("");

@@ -154,20 +154,20 @@ public class VentanaCSV extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BotonContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonContinuarActionPerformed
-        if (pathCorrelativas != null){/*
+        if (pathCorrelativas != null){
             if (pathCSV != null ){
-                AdminBD db = new AdminBD("cursadas","vista");
-       
+                AdminBD db = new AdminBD("cursadas","vista","alumnos", true);
+        
                 db.connectDatabase();
-                db.createTable();
-                db.loadCSV(pathCSV);
-                db.filterData(206, "2011");
-                */
-                this.setVisible(false);
+                //db.getData("./recursos/cursadas.csv", "./recursos/alumnosbien.csv", 206, "2011"); 
+                
+                
                 Carrera carrera=new Carrera(pathCorrelativas);
-                GeneradorCadena genCadenas = new GeneradorCadena(null);
+                GeneradorCadena genCadenas = new GeneradorCadena(db);
             
-                new VentanaResultados(genCadenas,carrera).setVisible(true);
+                this.setVisible(false);
+                //new VentanaResultados(genCadenas.getCadenas(carrera),cohortes).setVisible(true);
+            }
         }
         else{
             VentanaError vr=new VentanaError();

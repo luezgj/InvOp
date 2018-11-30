@@ -33,6 +33,9 @@ public class VentanaCSV extends javax.swing.JFrame {
     public static final int _AÑO_ULTIMA_COHORTE=2017;
     
     public VentanaCSV() {
+        super("Analisis de carrera");
+        pathCorrelativas = null;
+        pathCSV = null;
         initComponents();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -159,21 +162,37 @@ public class VentanaCSV extends javax.swing.JFrame {
                 AdminBD db = new AdminBD("cursadas","vista","alumnos", true);
         
                 db.connectDatabase();
-                //db.getData("./recursos/cursadas.csv", "./recursos/alumnosbien.csv", 206, "2011"); 
-                
+                db.dropTables();
+                db.getData(pathCSV, "./recursos/alumnosbien.csv", 206, "2011"); 
                 
                 Carrera carrera=new Carrera(pathCorrelativas);
                 GeneradorCadena genCadenas = new GeneradorCadena(db);
-            
+                
+                Map<Integer, Cohorte> cohortes= new HashMap();
+                for (int año=_AÑO_PRIMER_COHORTE;año<=_AÑO_ULTIMA_COHORTE;año++){
+                    db.generatePassTable(carrera.getNodos(), año);
+                    System.out.println("Llamo a getCadenas");
+                    List<Cadena> cadenas= genCadenas.getCadenas(carrera,año);
+                    Cohorte cohorte= new Cohorte(cadenas, año);
+                    cohortes.put(año, cohorte);
+                }
+                
                 this.setVisible(false);
-                //new VentanaResultados(genCadenas.getCadenas(carrera),cohortes).setVisible(true);
+                         
+                new VentanaResultados(genCadenas.getCadenas(carrera),cohortes).setVisible(true);
+                
+            }
+            else{
+                VentanaError vr=new VentanaError("Archivo de Correlativas no seleccionado.");
+                this.setVisible(false);
+                vr.setVisible(true);
             }
         }
         else{
-            VentanaError vr=new VentanaError();
+            VentanaError vr=new VentanaError("Archivo CSV no seleccionado.");
             this.setVisible(false);
             vr.setVisible(true);
-        }
+      }
     }//GEN-LAST:event_BotonContinuarActionPerformed
 
     private void BotonExaminarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExaminarCSVActionPerformed
@@ -243,38 +262,7 @@ public class VentanaCSV extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    /*
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         *//*
-        try {
-            javax.swing.UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(VentanaCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(VentanaCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(VentanaCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(VentanaCSV.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        /*
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new VentanaCSV().setVisible(true);
-            }
-        });
-    }
-*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BotonContinuar;
     private javax.swing.JButton BotonExaminarCSV;

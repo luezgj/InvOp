@@ -19,9 +19,9 @@ public class GeneradorInformacion {
         this.cadena = cadena;
     }
     
-    public static float getCriticidad(Cadena c, Linea l){
+    public static float getCriticidad(Cadena c){
         
-        return tiempoEsperadoRama(c)/l.getCantMaterias();
+        return tiempoEsperadoRama(c)/c.getLinea().getCantMaterias();
     }
     
     public static float tiempoEsperadoRama(Cadena cadena){

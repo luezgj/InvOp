@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,15 +18,15 @@ import javax.swing.JTextArea;
 import tpinvop.Materia;
 import tpinvop.Nodo;
 import tpinvop.Cadena;
-import tpinvop.Carrera;
 import tpinvop.Cohorte;
-import tpinvop.GeneradorCadena;
 import tpinvop.GeneradorInformacion;
 
 public class VentanaResultados extends javax.swing.JFrame {
 
     private mxGraph graph;
     private mxGraphComponent graphComponent;
+    private List<mxGraph> graphs;
+
     final static private int DISTANCIAX_ENTRE_BLOQUES = 280;
     final static private int DISTANCIAY_ENTRE_BLOQUES = 150;
     final static private int ANCHO_BLOQUE = 220;
@@ -37,95 +38,100 @@ public class VentanaResultados extends javax.swing.JFrame {
     final static private int ALTO_BLOQUE_CHICO = 20;   
     
     JPanel panelArriba;
+    JPanel panelGraph;
+    JTextArea textArea;
     JComboBox<String> Año;
-    GeneradorCadena generadorCadena;
     GeneradorInformacion generadorInformacion;
     JButton botonSimular;
     
     int añoSeleccionado;
     
+    Map<Integer,JPanel> panelsGraph;
+    
     Object parent;
  
-    public VentanaResultados(GeneradorCadena genCadenas,Carrera carrera) {
+    public VentanaResultados(List<Cadena> cadenas,Map<Integer, Cohorte> cohortes) {
         super("Cadenas");
-        setSize(800,600);
-        this.setLocationRelativeTo(null);
-        getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+        setFrame();
         
-        panelArriba = new JPanel();
-        editarPanelArriba();
-        
-        JTextArea textArea = new JTextArea(20, 25);
-        JScrollPane sp = new JScrollPane(textArea);
-        textArea.setEditable(false);
-        
-        add(panelArriba);
-        add(sp);
         añoSeleccionado = Integer.parseInt((String)Año.getSelectedItem());
-        List<Cadena> cadenas= genCadenas.getCadenas(carrera,añoSeleccionado);
         crearCadenas(cadenas);
+        
         int nroCadena = 1;
         textArea.append("Tiempo Total"+"\n"+"\n");
         for (Cadena c : cadenas){
-            textArea.append("Cadena "+nroCadena+": "+GeneradorInformacion.tiempoEsperadoRama(c)+"\n");
+            textArea.append("Cadena "+nroCadena+" -> Tiempo total:"+GeneradorInformacion.tiempoEsperadoRama(c)+"  Criticidad: "
+                    +GeneradorInformacion.getCriticidad(c)+"\n");
             nroCadena++;
         }
-        
         Año.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                        getContentPane().remove(2);
                         añoSeleccionado = Integer.parseInt((String)Año.getSelectedItem());
-                        crearCadenas(genCadenas.getCadenas(carrera,añoSeleccionado));
+                        
+                        crearCadenas(cohortes.get(añoSeleccionado).getCadenas());
                         textArea.setText("");
-                        for (Cadena c : cadenas)
-                            textArea.append(GeneradorInformacion.tiempoEsperadoRama(c)+"\n");
+                        int nroCadena = 1;
+                        for (Cadena c : cohortes.get(añoSeleccionado).getCadenas()){
+                            textArea.append("Cadena "+nroCadena+" -> Tiempo total:"+GeneradorInformacion.tiempoEsperadoRama(c)+"  Criticidad: "
+                                    +GeneradorInformacion.getCriticidad(c)+"\n");
+                            nroCadena++;
+                        }   
                 }
         });
         
         botonSimular.addActionListener( new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                Cohorte cohorte= new Cohorte(cadenas, añoSeleccionado);
-                new VentanaSimulacion(cohorte,añoSeleccionado).setVisible(true);
+                new VentanaSimulacion(cohortes.get(añoSeleccionado),añoSeleccionado).setVisible(true);
             }
         });
         
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
+    private void setFrame(){
+        setSize(800,600);
+        this.setLocationRelativeTo(null);
+        getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
+        
+        panelArriba = new JPanel();
+        editarPanelArriba();
+        textArea = new JTextArea(20, 25);
+        JScrollPane sp = new JScrollPane(textArea);
+        textArea.setEditable(false);
+        add(panelArriba);
+        add(sp);
+    }
+    
     private void editarPanelArriba(){
-        botonSimular = new JButton("Simular");
         Año = new JComboBox();
         JLabel label = new JLabel("Cohote");
-        Año.addItem("2011");
+        botonSimular = new JButton("Simular");
+        Año = new JComboBox();
         Año.addItem("2012");
         Año.addItem("2013");
         Año.addItem("2014");
         Año.addItem("2015");
         Año.addItem("2016");
         Año.addItem("2017");
-        Año.addItem("2018");
         panelArriba.add(label);
         panelArriba.add(Año);
         panelArriba.add(botonSimular);
     }
 
     void crearCadenas(List<Cadena> cadenas){
-        graph = new mxGraph(); 
-        parent = graph.getDefaultParent(); 
+        graph = new mxGraph();
         graph.getModel().beginUpdate();
-        
         parent = graph.getDefaultParent();
-        try{
-            int distanciaYEntreBloques = 5;
-            for (Cadena c : cadenas){
+        
+        int distanciaYEntreBloques = 5;
+        for (Cadena c : cadenas){
                 crearVertices(c,distanciaYEntreBloques);
                 distanciaYEntreBloques+=DISTANCIAY_ENTRE_BLOQUES;
-            }  
-        } finally {
-		graph.getModel().endUpdate();
-	}
+        }                  
+            
+	graph.getModel().endUpdate();
         
         graphComponent = new mxGraphComponent(graph);
         add(graphComponent);
@@ -135,6 +141,8 @@ public class VentanaResultados extends javax.swing.JFrame {
         boolean primerNodo = true;
         Object v1 = null;
         Object v2 = null;
+        boolean primeraMateria = true;
+        String codAux="";
 
         Iterator<Nodo> itLinea = c.getLinea().iterator();
         int posX=5;
@@ -143,7 +151,7 @@ public class VentanaResultados extends javax.swing.JFrame {
             Nodo nodo=itLinea.next();
             Iterator<Materia> itMaterias = nodo.iterator();
             
-            v2 = graph.insertVertex(parent,null,""/*nodo.getNombre()*/,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
+            v2 = graph.insertVertex(parent,null,"",posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
             double posXchico=10d;
             double posYchico=10d;
             for (Materia m: nodo){
@@ -152,14 +160,14 @@ public class VentanaResultados extends javax.swing.JFrame {
             }
             graph.foldCells(false, true, new Object[]{v2});
             
-            if (!primerNodo)
-                //              (parent, null, ACA VA LA PROBABILIDAD, v1, v2);
+            if (!primerNodo){
                 graph.insertEdge(parent, null,c.getProbAprobar(i) , v1, v2);
+                i++;
+            }
             else
                 primerNodo=false;
             v1 = v2;
             posX+=DISTANCIAX_ENTRE_BLOQUES;
-            i++;
 
         }
     }

@@ -201,8 +201,6 @@ public class AdminBD {
                 st.execute("DROP TABLE "+tableName);
                 System.out.println("Borrada la tabla: " + tableName);
             }
-            else
-                InfoMsgBox.infoBox("La tabla no existe", "Advertencia");
         } catch(SQLException sqle){
             InfoMsgBox.errBox(sqle.getMessage(), "Error de SQL");
         }

@@ -27,15 +27,19 @@ public class VentanaCSV extends javax.swing.JFrame {
     VentanaPrincipal vp;
     JFileChooser abrirArchivo;
     String pathCorrelativas;
-    String pathCSV;
+    String pathCursadasCSV;
+    String pathAlumnosCSV;
+    
+    VentanaError vr;
     
     public static final int _AÑO_PRIMER_COHORTE=2011;
     public static final int _AÑO_ULTIMA_COHORTE=2017;
     
     public VentanaCSV() {
-        super("Analisis de carrera");
+        super("Analizador de carreras");
         pathCorrelativas = null;
-        pathCSV = null;
+        pathCursadasCSV = null;
+        pathAlumnosCSV = null;
         initComponents();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -57,9 +61,12 @@ public class VentanaCSV extends javax.swing.JFrame {
         BotonExaminarCSV = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         BotonExaminarCorrelativas = new javax.swing.JButton();
-        BotonVolver = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        BotonExaminarCSV1 = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2013", "2014", "2015", "2016", "2017", "2018" }));
         jComboBox2.addActionListener(new java.awt.event.ActionListener() {
@@ -72,7 +79,7 @@ public class VentanaCSV extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        BotonContinuar.setText("Cadenas");
+        BotonContinuar.setText("Generar cadenas");
         BotonContinuar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BotonContinuarActionPerformed(evt);
@@ -95,101 +102,121 @@ public class VentanaCSV extends javax.swing.JFrame {
             }
         });
 
-        BotonVolver.setText("Volver");
-        BotonVolver.addActionListener(new java.awt.event.ActionListener() {
+        jLabel2.setText("Selecionar Archivos CSV:");
+
+        jLabel5.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        jLabel5.setText("Analizador de carreras");
+
+        jLabel6.setText("Alumnos");
+
+        BotonExaminarCSV1.setText("Examinar");
+        BotonExaminarCSV1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BotonVolverActionPerformed(evt);
+                BotonExaminarCSV1ActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Selecionar Archivo CSV");
+        jLabel7.setText("Cursadas");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap(22, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(BotonVolver)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BotonExaminarCorrelativas)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 24, Short.MAX_VALUE)
+                        .addComponent(BotonContinuar, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(91, 91, 91))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(BotonExaminarCorrelativas))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(BotonExaminarCSV)))
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(BotonContinuar)
-                                .addGap(131, 131, 131))))))
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(BotonExaminarCSV1)
+                            .addComponent(BotonExaminarCSV))
+                        .addContainerGap())))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(86, 86, 86)
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(BotonExaminarCSV))
+                .addGap(30, 30, 30)
+                .addComponent(jLabel5)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(BotonExaminarCorrelativas))
-                .addGap(5, 5, 5)
-                .addComponent(jLabel4)
-                .addGap(56, 56, 56)
-                .addComponent(BotonContinuar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addComponent(BotonVolver)
-                .addContainerGap())
+                    .addComponent(jLabel2)
+                    .addComponent(BotonExaminarCSV)
+                    .addComponent(jLabel7))
+                .addGap(9, 9, 9)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(BotonExaminarCSV1))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(BotonExaminarCorrelativas)))
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addComponent(BotonContinuar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void BotonContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonContinuarActionPerformed
-        if (pathCorrelativas != null){
-            if (pathCSV != null ){
-                AdminBD db = new AdminBD("cursadas","vista","alumnos", true);
-        
-                db.connectDatabase();
-                db.dropTables();
-                db.getData(pathCSV, "./recursos/alumnosbien.csv", 206, "2011"); 
-                
-                Carrera carrera=new Carrera(pathCorrelativas);
-                GeneradorCadena genCadenas = new GeneradorCadena(db);
-                
-                Map<Integer, Cohorte> cohortes= new HashMap();
-                for (int año=_AÑO_PRIMER_COHORTE;año<=_AÑO_ULTIMA_COHORTE;año++){
-                    db.generatePassTable(carrera.getNodos(), año);
-                    System.out.println("Llamo a getCadenas");
-                    List<Cadena> cadenas= genCadenas.getCadenas(carrera,año);
-                    Cohorte cohorte= new Cohorte(cadenas, año);
-                    cohortes.put(año, cohorte);
+        if (pathCursadasCSV != null){
+            if (pathAlumnosCSV != null ){
+                if(pathCorrelativas != null ){
+                    Carrera carrera=new Carrera(pathCorrelativas);
+                    AdminBD db = new AdminBD("cursadas","vista","alumnos",true);
+
+                    db.connectDatabase();
+                    db.dropTables();
+                    db.getData(pathCursadasCSV, pathAlumnosCSV, 206, "2011"); 
+                    db.generatePassTable(carrera.getNodos(), null);
+
+                    GeneradorCadena genCadenas = new GeneradorCadena(db);
+
+                    Map<Integer, Cohorte> cohortes= new HashMap();
+                    for (int año=_AÑO_PRIMER_COHORTE;año<=_AÑO_ULTIMA_COHORTE;año++){
+                        db.generatePassTable(carrera.getNodos(), año);
+                        System.out.println("Llamo a getCadenas");
+                        List<Cadena> cadenas= genCadenas.getCadenas(carrera,año);
+                        Cohorte cohorte= new Cohorte(cadenas, año);
+                        cohortes.put(año, cohorte);
+                    }
+
+                    this.setVisible(false);
+                    new VentanaResultados(genCadenas.getCadenas(carrera),cohortes).setVisible(true);
+                }else{
+                    vr=new VentanaError("Archivo de Correlativas no seleccionado.");
+                    this.setVisible(false);
+                    vr.setVisible(true);
                 }
-                
-                this.setVisible(false);
-                         
-                new VentanaResultados(genCadenas.getCadenas(carrera),cohortes).setVisible(true);
-                
+            }else{
+            vr=new VentanaError("Archivo alumnos.csv no seleccionado.");
+            this.setVisible(false);
+            vr.setVisible(true);
             }
-            else{
-                VentanaError vr=new VentanaError("Archivo de Correlativas no seleccionado.");
-                this.setVisible(false);
-                vr.setVisible(true);
-            }
-        }
-        else{
-            VentanaError vr=new VentanaError("Archivo CSV no seleccionado.");
+        }else{
+            vr=new VentanaError("Archivo cursadas.csv no seleccionado.");
             this.setVisible(false);
             vr.setVisible(true);
       }
@@ -211,7 +238,7 @@ public class VentanaCSV extends javax.swing.JFrame {
                 try
                 {
                     String nombre = f.getName();
-                    pathCSV = f.getAbsolutePath();
+                    pathCursadasCSV = f.getAbsolutePath();
                     //Colocamos en el titulo de la aplicacion el 
                     //nombre del archivo
                     this.setTitle( nombre );
@@ -252,26 +279,50 @@ public class VentanaCSV extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_BotonExaminarCorrelativasActionPerformed
 
-    private void BotonVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonVolverActionPerformed
-        vp=new VentanaPrincipal();
-        this.setVisible(false);
-        vp.setVisible(true);
-    }//GEN-LAST:event_BotonVolverActionPerformed
-
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
+    private void BotonExaminarCSV1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonExaminarCSV1ActionPerformed
+        JButton btn = (JButton)evt.getSource();
+        if( btn.getText().equals( "Examinar" ) )
+        {
+            if( abrirArchivo == null ) abrirArchivo = new JFileChooser();
+            //Con esto solamente podamos abrir archivos
+            abrirArchivo.setFileSelectionMode( JFileChooser.FILES_ONLY );
+ 
+            int seleccion = abrirArchivo.showOpenDialog( this );
+ 
+            if( seleccion == JFileChooser.APPROVE_OPTION )
+            {
+                File f = abrirArchivo.getSelectedFile();
+                try
+                {
+                    String nombre = f.getName();
+                    pathAlumnosCSV = f.getAbsolutePath();
+                    //Colocamos en el titulo de la aplicacion el 
+                    //nombre del archivo
+                    this.setTitle( nombre );
+ 
+                    //En el editor de texto colocamos su contenido
+ 
+                }catch( Exception exp){}
+            }
+        }
+    }//GEN-LAST:event_BotonExaminarCSV1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BotonContinuar;
     private javax.swing.JButton BotonExaminarCSV;
+    private javax.swing.JButton BotonExaminarCSV1;
     private javax.swing.JButton BotonExaminarCorrelativas;
-    private javax.swing.JButton BotonVolver;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     // End of variables declaration//GEN-END:variables
 }

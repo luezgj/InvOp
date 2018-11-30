@@ -17,7 +17,7 @@ public class VentanaError extends javax.swing.JFrame {
     /**
      * Creates new form VentanaError
      */
-    VentanaPrincipal windowPrincipal=new VentanaPrincipal();
+    VentanaCSV windowPrincipal=new VentanaCSV();
     
     public VentanaError(String tipoError) {
         super("Error");
@@ -61,16 +61,16 @@ public class VentanaError extends javax.swing.JFrame {
                         .addGap(99, 99, 99)
                         .addComponent(BotonVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(69, 69, 69)
+                        .addGap(23, 23, 23)
                         .addComponent(jLabel1)))
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(89, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(44, Short.MAX_VALUE)
+                .addContainerGap(56, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(30, 30, 30)
+                .addGap(18, 18, 18)
                 .addComponent(BotonVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29))
         );

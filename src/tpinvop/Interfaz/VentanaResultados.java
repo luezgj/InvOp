@@ -58,9 +58,8 @@ public class VentanaResultados extends javax.swing.JFrame {
         crearCadenas(cadenas);
         
         int nroCadena = 1;
-        textArea.append("Tiempo Total"+"\n"+"\n");
         for (Cadena c : cadenas){
-            textArea.append("Cadena "+nroCadena+" -> Tiempo total:"+GeneradorInformacion.tiempoEsperadoRama(c)+"  Criticidad: "
+            textArea.append("Cadena "+nroCadena+" -> Tiempo total:"+GeneradorInformacion.tiempoEsperadoRama(c)+"     Criticidad: "
                     +GeneradorInformacion.getCriticidad(c)+"\n");
             nroCadena++;
         }
@@ -73,7 +72,7 @@ public class VentanaResultados extends javax.swing.JFrame {
                         textArea.setText("");
                         int nroCadena = 1;
                         for (Cadena c : cohortes.get(añoSeleccionado).getCadenas()){
-                            textArea.append("Cadena "+nroCadena+" -> Tiempo total:"+GeneradorInformacion.tiempoEsperadoRama(c)+"  Criticidad: "
+                            textArea.append("Cadena "+nroCadena+" -> Tiempo total:"+GeneradorInformacion.tiempoEsperadoRama(c)+"     Criticidad: "
                                     +GeneradorInformacion.getCriticidad(c)+"\n");
                             nroCadena++;
                         }   

@@ -17,7 +17,6 @@ public class Cadena {
     public Cadena(Linea l) {
         this.l = l;
         prob= new float[l.getCantMaterias()];
-        System.out.println("Tamaño de linea; "+l.getCantMaterias());
         matrizN = new float[l.getCantMaterias()][l.getCantMaterias()];
     }
     

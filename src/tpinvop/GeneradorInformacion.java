@@ -37,14 +37,6 @@ public class GeneradorInformacion {
         return suma;
     }
     
-    private static  void mostrarMatriz(float [][] matrizN){
-        for (int i=0; i < matrizN.length;i++){
-            for (int j=0; j < matrizN.length;j++)
-                System.out.print(matrizN[i][j] + " ");
-            System.out.println();
-        }
-    }
-    
     private static void restarMatrizConI(float[][] matrizN) {
         for (int i=0; i < matrizN.length; i++){
             if (i == matrizN.length-1){
@@ -60,7 +52,6 @@ public class GeneradorInformacion {
         float det=1/determinante(matriz);
         float[][] nmatriz;
         nmatriz=matrizAdjunta(matriz);
-        mostrarMatriz(nmatriz);
         multiplicarMatriz(det,nmatriz);
         return nmatriz;
     }

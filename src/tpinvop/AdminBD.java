@@ -182,8 +182,9 @@ public class AdminBD {
         
         List<String> l = this.getTableNames();
         
-        for(String s : l)
+        for(String s : l){
             dropTable(s);
+        }
         
         this.cohortPassTables.clear();
         this.cohortTables.clear();
@@ -197,7 +198,7 @@ public class AdminBD {
         
         try{
             Statement st = con.createStatement();
-            if(this.existsTable(tableName) && this.existsTableName(tableName)){
+            if(this.existsTable(tableName) /*&& this.existsTableName(tableName)*/){
                 st.execute("DROP TABLE "+tableName);
                 System.out.println("Borrada la tabla: " + tableName);
             }
@@ -210,7 +211,8 @@ public class AdminBD {
     private List<String> getTableNames(){
         try{
             DatabaseMetaData m = con.getMetaData();
-            ResultSet tables = m.getTables(con.getCatalog(), con.getSchema(), "%", null);
+            String[] tipos= {"TABLE"};
+            ResultSet tables = m.getTables(con.getCatalog(), con.getSchema(), "%", tipos);
             LinkedList<String> result = new LinkedList();
             
             while(tables.next()){
@@ -524,6 +526,7 @@ public class AdminBD {
 
     //Return pass percentage of a node considering only the cohort year=año // año== null dont consider cohort
     public float getPassPercentage(Nodo n, Integer añoCohorte){
+        System.out.println("****Tamaño del mapa de tablas: "+ cohortPassTables.size());
         String tableUsed=getPassTable(añoCohorte);
         System.out.println("Saco porcentaje del nodo: "+n.getNombre()+"- año: "+añoCohorte+"- Tabla:"+tableUsed);
         if(tableUsed==null){
@@ -575,6 +578,7 @@ public class AdminBD {
         if (añoCohorte==null){
             return generalPassTable;
         } else {
+            
             return cohortPassTables.get(añoCohorte);
         }
     }
@@ -583,6 +587,7 @@ public class AdminBD {
         if (añoCohorte==null){
             return generalPassTable;
         } else {
+            System.out.println("!!!!!!!!!!NOMBRE DE TABLA PASA CREADA "+añoCohorte);
             String passTable= new String("pass"+añoCohorte);
             cohortPassTables.put(añoCohorte, passTable);
             return passTable;

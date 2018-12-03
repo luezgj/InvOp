@@ -197,10 +197,14 @@ public class VentanaCSV extends javax.swing.JFrame {
                     Map<Integer, Cohorte> cohortes= new HashMap();
                     for (int año=_AÑO_PRIMER_COHORTE;año<=_AÑO_ULTIMA_COHORTE;año++){
                         db.generatePassTable(carrera.getNodos(), año);
-                        System.out.println("Llamo a getCadenas");
+                        //System.out.println("Llamo a getCadenas");
                         List<Cadena> cadenas= genCadenas.getCadenas(carrera,año);
                         Cohorte cohorte= new Cohorte(cadenas, año);
+                        System.out.println("***AÑO "+año+", prob aprobar nodo 0 de cadena 0:");
+                        System.out.println(cadenas.get(0).getProbAprobar(0));
                         cohortes.put(año, cohorte);
+                        System.out.println("***AÑO "+año+", prob aprobar nodo 0 de cadena 0:");
+                        System.out.println(cohortes.get(año).getCadenas().get(0).getProbAprobar(0));
                     }
 
                     this.setVisible(false);

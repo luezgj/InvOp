@@ -12,6 +12,7 @@ public class GeneradorCadena {
         dbAdmin=admin;
     }
     
+    //Gets from the database the pass percentage for each node
     private Cadena getCadena(Linea linea, Integer año){
         Cadena c=new Cadena(linea);
         int nroNodo=0;
@@ -22,6 +23,7 @@ public class GeneradorCadena {
         return c;
     }
     
+    //Returns all the markov chains from the career (All years)
     public List<Cadena> getCadenas(Carrera carrera){
         List<Linea> lineas=carrera.getLineas();
         List<Cadena> cadenas=new LinkedList<>();
@@ -32,6 +34,7 @@ public class GeneradorCadena {
         return cadenas;
     }
     
+    //Returns all the markov chains from the career (One year only)
     public List<Cadena> getCadenas(Carrera carrera, Integer año){
         List<Linea> lineas=carrera.getLineas();
         List<Cadena> cadenas=new LinkedList<>();

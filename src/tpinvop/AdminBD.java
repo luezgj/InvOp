@@ -35,25 +35,30 @@ public class AdminBD {
         this.generalTable = tableName;
         this.studentsTable = studentsTable;
         this.generalPassTable = viewName;
-        this.truncate = truncate;           //Este valor luego es utilizado para borrar todas las tablas
+        this.truncate = truncate;           //This value is used for deleting all tables if its true
     }
     
     //Connect to database and gets the current tables, if truncate is true drops all
     public void connectDatabase() {
         try {
             try { 
+                //Loads DB driver
                 Class.forName("org.postgresql.Driver");
             } catch (ClassNotFoundException ex) {
                 System.out.println("Error al registrar el driver de PostgreSQL: " + ex);
             }
+            
+            //Sets the url of the database and starts the connection
             String urlDatabase =  "jdbc:postgresql://localhost:5432/invopdb"; 
             con = DriverManager.getConnection(urlDatabase,  "invop", "12345");
             System.out.println("Conectado");
             
+            //If the variable truncate is false -> gets all tables from database
             if(!truncate){
                 this.updateTableList();
                 System.out.println("Cargada lista de tablas satisfactoriamente");
             }
+            //If not it drops all tables
             else{
                 this.dropTables();
             }
@@ -68,10 +73,13 @@ public class AdminBD {
     //Gets all data from csv files and puts in the database, then applies the filtering
     public void getData(String pathCoursed, String pathStudents, int cod, String plan){
         
+        //Creates subjects and students table 
         createCoursedTable();
         createStudentsTable();
+        //Put the csv data into the tables
         loadCoursedCSV(pathCoursed);
         loadStudentsCSV(pathStudents);
+        //Filter all the unnecesary data from the tables
         filterCoursedData(cod, plan);
         filterStudentsData(cod);
     }
@@ -167,6 +175,7 @@ public class AdminBD {
         }
     }
     
+    //Method that gets from the DB the list of all tables and then puts into the table maps
     private void updateTableList(){
          List<String> l = this.getTableNames();
 
@@ -210,8 +219,11 @@ public class AdminBD {
     //Obtains all table names in the current database
     private List<String> getTableNames(){
         try{
+            //get DB metadata
             DatabaseMetaData m = con.getMetaData();
+            //uses as filter the keyword TABLE
             String[] tipos= {"TABLE"};
+            //getTables -> (wantedCatalog, wantedSchema, ?, filteringKeywords)
             ResultSet tables = m.getTables(con.getCatalog(), con.getSchema(), "%", tipos);
             LinkedList<String> result = new LinkedList();
             
@@ -305,7 +317,7 @@ public class AdminBD {
         
     }
     
-    //Deletes the not useful data from table
+    //Deletes the not useful data from the subjects table. Deletes if the row isn't from the wanted career and plan 
     public void filterCoursedData(int carrera, String plan){
         
         try{
@@ -332,6 +344,7 @@ public class AdminBD {
         }
     }
     
+    //Deletes the not useful data from the students table. Eliminates all rows that doesn't belong to the career code
     public void filterStudentsData(int carrera){
         
         try{
@@ -357,6 +370,7 @@ public class AdminBD {
         }
     }
     
+    //Creates a table for the desired cohort, getting the data from the general table.
     private String filterCohort(Integer añocohorte){
         String nombreTabla=generalTable;
         if (añocohorte!=null && !cohortTables.containsKey(añocohorte)){
@@ -479,10 +493,13 @@ public class AdminBD {
                     try {
                         String[] materias= new String[n.getCantMaterias()];
                         int i=0;
+                        //For each materia in a node
                         for(Materia m:n){
                             materias[i]=m.getNombre();
                             i++;
                         }
+                        
+                        //Forms a sql array and puts all node subjects, then executes the sql procedure declarated before
                         java.sql.Array arrayMaterias= con.createArrayOf("varchar", materias);
                         sql="SELECT * FROM createNodeView (?, ?)";
                         PreparedStatement pstmt = con.prepareStatement(sql);
@@ -529,10 +546,13 @@ public class AdminBD {
         System.out.println("****Tamaño del mapa de tablas: "+ cohortPassTables.size());
         String tableUsed=getPassTable(añoCohorte);
         System.out.println("Saco porcentaje del nodo: "+n.getNombre()+"- año: "+añoCohorte+"- Tabla:"+tableUsed);
+        
+        //Esto esta bien????
         if(tableUsed==null){
             return -1;
         }
         
+        //Gets from table aproved and total from each node
         String sql="SELECT aprobados,aprobados+desaprobados as total FROM "+ tableUsed +  //Cambiar por media
         " WHERE nombre='" + n.getNombre()+"'";
         System.out.println(sql);
@@ -543,7 +563,10 @@ public class AdminBD {
         try {
             Statement stmt;
             stmt = con.createStatement();
+            //Executes the sql query
             ResultSet rs= stmt.executeQuery(sql);
+            
+            //for each row from the query results gets data and then obtains the percentage
             while(rs.next()){
                 Float aprobados=rs.getFloat(1);
                 int total=rs.getInt(2);

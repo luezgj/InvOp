@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import tpinvop.Materia;
 import tpinvop.Nodo;
 import tpinvop.Cadena;
@@ -41,10 +42,11 @@ public class VentanaResultados extends javax.swing.JFrame {
     JPanel panelGraph;
     JTextArea textArea;
     JComboBox<String> Año;
+    JTextField cantInicial;
     GeneradorInformacion generadorInformacion;
     JButton botonSimular;
     
-    int añoSeleccionado;
+    Integer añoSeleccionado;
     
     Map<Integer,JPanel> panelsGraph;
     
@@ -66,7 +68,11 @@ public class VentanaResultados extends javax.swing.JFrame {
         Año.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                        añoSeleccionado = Integer.parseInt((String)Año.getSelectedItem());
+                        if(!((String)Año.getSelectedItem()).equals("General")){
+                            añoSeleccionado = Integer.parseInt((String)Año.getSelectedItem());
+                        }
+                        else
+                            añoSeleccionado = null;
                         
                         crearCadenas(cohortes.get(añoSeleccionado).getCadenas());
                         textArea.setText("");
@@ -82,7 +88,7 @@ public class VentanaResultados extends javax.swing.JFrame {
         botonSimular.addActionListener( new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                new VentanaSimulacion(cohortes.get(añoSeleccionado),añoSeleccionado).setVisible(true);
+                new VentanaSimulacion(cohortes.get(añoSeleccionado),añoSeleccionado,Integer.parseInt(cantInicial.getText())).setVisible(true);
             }
         });
         
@@ -108,6 +114,7 @@ public class VentanaResultados extends javax.swing.JFrame {
         JLabel label = new JLabel("Cohote");
         botonSimular = new JButton("Simular");
         Año = new JComboBox();
+        Año.addItem("General");
         Año.addItem("2012");
         Año.addItem("2013");
         Año.addItem("2014");
@@ -115,6 +122,10 @@ public class VentanaResultados extends javax.swing.JFrame {
         Año.addItem("2016");
         Año.addItem("2017");
         panelArriba.add(label);
+        panelArriba.add(Año);
+        JLabel labelCantidad = new JLabel("Cantidad de alumnos inicial");
+        cantInicial = new JTextField("200");
+        panelArriba.add(labelCantidad);
         panelArriba.add(Año);
         panelArriba.add(botonSimular);
     }
@@ -167,8 +178,12 @@ public class VentanaResultados extends javax.swing.JFrame {
                 primerNodo=false;
             v1 = v2;
             posX+=DISTANCIAX_ENTRE_BLOQUES;
+        
 
         }
+        
+        v2 = graph.insertVertex(parent, null, "Finalizada", posX, posY, ANCHO_BLOQUE, ALTO_BLOQUE);
+        graph.insertEdge(parent, null, c.getProbAprobar(i), v1, v2);
     }
     
     @SuppressWarnings("unchecked")

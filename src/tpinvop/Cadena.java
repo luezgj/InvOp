@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tpinvop;
 
 /**
@@ -14,12 +9,14 @@ public class Cadena {
     private float[] prob;
     private float[][] matrizN;
 
+    //Constructor
     public Cadena(Linea l) {
         this.l = l;
         prob= new float[l.getCantMaterias()];
         matrizN = new float[l.getCantMaterias()][l.getCantMaterias()];
     }
     
+    //Set the pass probability to a node
     public boolean setProbAprobar(int nroNodo, float probabilidad){
         if(nroNodo<l.getCantMaterias()){
             prob[nroNodo]=probabilidad;
@@ -28,10 +25,12 @@ public class Cadena {
         return false;
     }
 
+    //Returns the line associated to this markov chain
     public Linea getLinea() {
         return l;
     }
     
+    //Returns the pass probability of a particular node
     public float getProbAprobar(int nroNodo){
         if(nroNodo<l.getCantMaterias()){
             return prob[nroNodo];
@@ -39,6 +38,7 @@ public class Cadena {
         return -1;
     }
     
+    //Returns the fail probability of a particular node
     public float getProbDesaprobar(int nroNodo){
         if(nroNodo<l.getCantMaterias()){
             return 1-prob[nroNodo];
@@ -46,6 +46,7 @@ public class Cadena {
         return -1;
     }
     
+    //Sets the markov chain with the probability array
     public void setMatriz(){
         for (int i=0; i < matrizN.length;i++)
             for (int j=0 ; j < matrizN.length; j++)

@@ -33,9 +33,11 @@ public class Carrera{
              
     }
         
+    //Inicializa el hash que contiene si las materias fueron usadas en alguna linea
     private void inicializarHash(){
         if(this.materiaUsada == null)
             materiaUsada = new HashMap();
+        
         for (Materia m : Materias)
             materiaUsada.put(m.getCod(), false);
     }
@@ -50,17 +52,18 @@ public class Carrera{
         BufferedReader br = null;
  
         try {
-		archivo = new File (ruta);
-                is= new FileInputStream(archivo);
-                InputStreamReader isr = new InputStreamReader(is, "ISO-8859-1");
-		br = new BufferedReader(isr);
-                
-        String linea;
+            //Se asocia el archivo a una variable y se abre
+            archivo = new File (ruta);
+            is= new FileInputStream(archivo);
+            InputStreamReader isr = new InputStreamReader(is, "ISO-8859-1");
+            br = new BufferedReader(isr);
+
+            String linea;
         
-        // Se obtiene los datos de la linea del archivo
-		while((linea=br.readLine())!=null){
-                    getInfoMateria(linea,Materias);
-                }
+            // Se obtiene los datos de la linea del archivo
+            while((linea=br.readLine())!=null){
+                getInfoMateria(linea,Materias);
+            }
         }
         catch(Exception e){
            e.printStackTrace();
@@ -78,7 +81,7 @@ public class Carrera{
     }
     
     //Metodo que obtiene de cada linea del archivo los datos de cada materia
-    //Formato? : [CodMateria\tab\NomMateria\tab\{Correlativas\,\}]
+    //Formato : CodMateria;NomMateria;[Correlativas,]
     private void getInfoMateria(String linea,List<Materia> Materias){
         //String lineaMod = "	" + linea;
         String [] partes = linea.split(";");
@@ -91,7 +94,7 @@ public class Carrera{
         Materias.add(m);
     }
     
-    // Obtiene la lista de correlatividades...
+    // Obtiene la lista de correlatividades.
     private List<Integer> getListCorrelatividades(String correlatividades){
         List<Integer> salida=new ArrayList<>();
         String lineaMod = ","+correlatividades;
@@ -158,6 +161,7 @@ public class Carrera{
         return salida;
     }
     
+    //Genera la linea a partir de la materia final, armando la lista desde el final al principio
     private void CompletarLinea(Linea l,Materia m,int idLinea,Nodo nodo){
         
         Nodo nodoInicial = new Nodo();
@@ -165,10 +169,15 @@ public class Carrera{
         Nodo nuevoNodo;
         Nodo nodoSig = nodoInicial;
         List<Integer> codMat;
+        
+        //Mientras el nodo tenga correlativas
         while (nodoSig.getCantMaterias() > 0) {
             nuevoNodo = new Nodo();
+            
+            //Para cada materia del nodo
             for (Materia mat : nodoSig){
                 codMat=mat.getCorrelatividades();
+                
                 //Inserta en el nodo las correlatividades correspondientes
                 for(Integer codCorrelativa:codMat){
                     if (materiaUsada.get(codCorrelativa)){
@@ -180,30 +189,39 @@ public class Carrera{
                     
                 }
             }
+            //Si es un nodo inicial(el primero de la linea) lo añade
             if (nuevoNodo.getCantMaterias() > 0)
                 l.addNodo(nuevoNodo);
             nuevoNodo.ordenar();
             nodoSig = nuevoNodo;
         }
+        
         l.setDifCuatrimestresNodos();
         l.invertir();
     }
         
     
-    //Crea todas las lineas *****OK*******
+    //Crea todas las lineas
     private List<Linea> getRamas(){
+        
         Lineas= new ArrayList<>();
         int idLinea=1;
         Linea l;
         Nodo nodo;
+        
+        //Por cada materia de la lista de materias de la carrera
         for(Materia m:Materias){
+            
              if (!Pertenece(m)){
                 inicializarHash();
                 l=new Linea(idLinea);
                 l.addMateria(m);
+                
+                //Si es una materia sin correlativas la añade como linea
                 if (!m.tieneCorrelativas()){
                     Lineas.add(l);
                 }
+                //En caso contrario genera toda la linea a partir de dicha materia
                 else{
                     nodo = new Nodo();
                     CompletarLinea(l,m,idLinea,nodo);

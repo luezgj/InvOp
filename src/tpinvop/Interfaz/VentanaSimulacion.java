@@ -28,7 +28,7 @@ public class VentanaSimulacion extends javax.swing.JFrame {
     private ArrayList<mxGraph> graphs= new ArrayList();
     private List<Object> verticesAnteriores= new ArrayList();
     boolean[] grafoCreado;
-    final static private int alumnosInicio=120;
+    private int alumnosInicio=120;
     
     final static private int DISTANCIAX_ENTRE_BLOQUES = 150;
     final static private int DISTANCIAY_ENTRE_BLOQUES = 70;
@@ -45,11 +45,13 @@ public class VentanaSimulacion extends javax.swing.JFrame {
      * @param cohorte
      * @param añoInicio
      */
-    public VentanaSimulacion(Cohorte cohorte,int añoInicio) {
+    public VentanaSimulacion(Cohorte cohorte,int añoInicio, int cantAlumnos) {
         initComponents();
         
         setSize(800,600);
         this.setLocationRelativeTo(null);
+        
+        this.alumnosInicio = cantAlumnos;
         
         simulador= new Simulador(cohorte.getCadenas(),alumnosInicio);
         
@@ -101,9 +103,17 @@ public class VentanaSimulacion extends javax.swing.JFrame {
                 posY=15;
                 primero=true;
                 for(int nodo=añoRelativo;nodo>=0;nodo--){
-                    if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()-1){
-                        int añoActual=añoInicio+añoRelativo;
-                        String textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nodo, añoRelativo);
+                    if (nodo<=cadenas.get(nLinea).getLinea().getCantMaterias()){
+                        String textoVertice;
+                                
+                        if(nodo == cadenas.get(nLinea).getLinea().getCantMaterias()){
+                            textoVertice="Finalizado";
+                        }
+                        else {
+                            int añoActual=añoInicio+añoRelativo;
+                            textoVertice="Nodo "+nodo+" - "+añoActual+"\n"+simulador.getCantidad(nodo, añoRelativo);
+                        }
+                            
                         vertice = graph.insertVertex(parent,null,textoVertice,posX,posY,ANCHO_BLOQUE,ALTO_BLOQUE);
                         verticesAnteriores.add(vertice);
 
